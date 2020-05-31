@@ -1,7 +1,7 @@
-﻿// 
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT License. See LICENSE file in the project root for full license information.
-// 
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information
+
 #region Usings
 
 using System;
@@ -30,7 +30,7 @@ namespace DotNetNuke.Services.Search
     /// <remarks>
     /// </remarks>
     /// -----------------------------------------------------------------------------
-    public class TabIndexer : IndexingProvider
+    public class TabIndexer : IndexingProviderBase
     {
         private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof(TabIndexer));
         private static readonly int TabSearchTypeId = SearchHelper.Instance.GetSearchTypeByName("tab").SearchTypeId;
@@ -126,12 +126,6 @@ namespace DotNetNuke.Services.Search
             SetLocalTimeOfLastIndexedItem(portalId, scheduleId, searchDocuments.Last().ModifiedTimeUtc);
             searchDocuments.Clear();
             return total;
-        }
-
-        [Obsolete("Legacy Search (ISearchable) -- Deprecated in DNN 7.1. Use 'IndexSearchDocuments' instead.. Scheduled removal in v10.0.0.")]
-        public override SearchItemInfoCollection GetSearchIndexItems(int portalId)
-        {
-            return null;
         }
     }
 }

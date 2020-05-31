@@ -1,7 +1,7 @@
-﻿// 
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT License. See LICENSE file in the project root for full license information.
-// 
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information
+
 #region Usings
 
 using System;
@@ -40,7 +40,7 @@ namespace DotNetNuke.Services.Search
     /// <remarks>
     /// </remarks>
     /// -----------------------------------------------------------------------------
-    public class UserIndexer : IndexingProvider
+    public class UserIndexer : IndexingProviderBase
     {
         internal const string UserIndexResetFlag = "UserIndexer_ReIndex";
         internal const string ValueSplitFlag = "$$$";
@@ -408,16 +408,6 @@ namespace DotNetNuke.Services.Search
         {
             var schema = reader.GetSchemaTable();
             return schema != null && schema.Select("ColumnName = '" + col + "'").Length > 0;
-        }
-
-        #endregion
-
-        #region Obsoleted Methods
-
-        [Obsolete("Legacy Search (ISearchable) -- Deprecated in DNN 7.1. Use 'IndexSearchDocuments' instead.. Scheduled removal in v10.0.0.")]
-        public override SearchItemInfoCollection GetSearchIndexItems(int portalId)
-        {
-            return null;
         }
 
         #endregion
