@@ -91,6 +91,7 @@
     <None Include="Module.build" />
     <None Include="packages.config" />
     <None Include="GoogleTagManager.config" />
+    <None Include="ReadMe.md" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DotNetNuke.Instrumentation\DotNetNuke.Instrumentation.csproj">
