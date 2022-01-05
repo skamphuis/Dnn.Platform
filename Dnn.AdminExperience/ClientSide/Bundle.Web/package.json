@@ -45,7 +45,7 @@
     "react-dom": "^16.6.3",
     "react-height": "3.0.1",
     "react-hot-loader": "4.8.5",
-    "react-modal": "3.6.1",
+    "react-modal": "3.14.4",
     "react-motion": "0.5.2",
     "react-redux": "5.1.1",
     "react-tabs": "3.0.0",
