@@ -20,3 +20,4 @@
 	<DNN:DNNToolBarButton ControlAction="indent" ID="tbIndent" ToolTip="Indent" CssClass="eipbutton_indent" runat="server"/>
 	<DNN:DNNToolBarButton ControlAction="createlink" ID="tbCreateLink" ToolTip="CreateLink" CssClass="eipbutton_createlink" runat="server"/>
 </DNN:DNNToolBar>
+<p>BOO</p>
