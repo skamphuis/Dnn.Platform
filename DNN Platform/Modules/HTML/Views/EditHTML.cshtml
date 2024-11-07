@@ -16,8 +16,6 @@
                 {
                     @Html.Partial("~/DeskTopModules/Html/Views/_Edit.cshtml", Model)
                 }
-
-
                 @if (Model.ShowPreviewView)
                 {
                     <fieldset>
@@ -37,13 +35,15 @@
                             </div>
                         }
                         <div id="divPreview" class="html_preview">
-                            Html.Raw(Model.PreviewContent)
+                            @Html.Raw(Model.PreviewContent)
                         </div>
                     </fieldset>
+                    @*
                     <h2 id="dnnSitePanelEditHTMLHistory" class="dnnFormSectionHead"><a href="">@Localization.GetString("dshHistory", Model.LocalResourceFile)</a></h2>
                     <fieldset id="fsEditHtmlHistory">
                         Html.Partial("_HistoryGrid", Model.HistoryItems)
                     </fieldset>
+                    *@
                 }
 
                 @if (Model.ShowHistoryView)
@@ -54,7 +54,7 @@
                                 <label>@Localization.GetString("MaxVersions", Model.LocalResourceFile)</label>
                                 <span>@Model.MaxVersions</span>
                             </div>
-                            Html.Partial("_VersionsGrid", Model.VersionItems)
+                            @Html.Partial("~/DesktopModules/HTML/Views/_History.cshtml", Model)
                         </div>
                     </fieldset>
                 }
@@ -69,13 +69,13 @@
                     <a href="@Model.RedirectUrl" class="dnnSecondaryAction">@Localization.GetString("cmdCancel", Model.LocalResourceFile)</a>
                 </li>
                 <li>
-                    <button type="button" data-action="@Url.Action("ShowEdit")" class="dnnSecondaryAction" id="cmdEdit" @*@(Model.ShowEditView ? "disabled" : "" )*@>@Localization.GetString("cmdEdit", Model.LocalResourceFile)</button>
+                    <button type="button" data-action="@Url.Action("ShowEdit")" class="@(Model.ShowEditView ? "aspNetDisabled" : "dnnSecondaryAction" )" id="cmdEdit" @(Model.ShowEditView ? "disabled" : "" ) >@Localization.GetString("cmdEdit", Model.LocalResourceFile)</button>
                 </li>
                 <li>
-                    <button type="button" disabled class="dnnSecondaryAction" id="cmdPreview">@Localization.GetString("cmdPreview", Model.LocalResourceFile)</button>
+                    <button type="button" data-action="@Url.Action("ShowPreview")" class="@(Model.ShowPreviewView ? "aspNetDisabled" : "dnnSecondaryAction" )" id="cmdPreview" @(Model.ShowPreviewView ? "disabled" : "" )>@Localization.GetString("cmdPreview", Model.LocalResourceFile)</button>
                 </li>
                 <li>
-                    <button type="button" data-action="@Url.Action("ShowHistory")" class="dnnSecondaryAction" id="cmdHistory">@Localization.GetString("cmdHistory", Model.LocalResourceFile)</button>
+                    <button type="button" data-action="@Url.Action("ShowHistory")" class="@(Model.ShowHistoryView ? "aspNetDisabled" : "dnnSecondaryAction" )" id="cmdHistory" @(Model.ShowHistoryView ? "disabled" : "" ) >@Localization.GetString("cmdHistory", Model.LocalResourceFile)</button>
                 </li>
                 <li>
                     <span class="separator"></span>
@@ -99,70 +99,70 @@
     }
 </div>
 
-
-
-@section Scripts {
-    <script>
-        (function ($, Sys) {
-            function setupDnnEditHtml() {
-                $('#dnnEditHtml').dnnPanels();
-                if (window.frameElement && window.frameElement.id == "iPopUp") {
-                    var ckeditorid = $(".ehCurrentContent textarea.editor").attr('id');
-                    if (ckeditorid) {
-                        CKEDITOR.on("instanceReady", function (event) {
-                            editor = event.editor;
+@*
+    @section Scripts {
+        <script>
+            (function ($, Sys) {
+                function setupDnnEditHtml() {
+                    $('#dnnEditHtml').dnnPanels();
+                    if (window.frameElement && window.frameElement.id == "iPopUp") {
+                        var ckeditorid = $(".ehCurrentContent textarea.editor").attr('id');
+                        if (ckeditorid) {
+                            CKEDITOR.on("instanceReady", function (event) {
+                                editor = event.editor;
+                                resizeDnnEditHtml();
+                            });
+                        } else {
                             resizeDnnEditHtml();
+                        }
+                        $(window).resize(function () {
+                            var timeout;
+                            if (timeout) clearTimeout(timeout);
+                            timeout = setTimeout(function () {
+                                timeout = null;
+                                resizeDnnEditHtml();
+                            }, 50);
                         });
-                    } else {
-                        resizeDnnEditHtml();
                     }
-                    $(window).resize(function () {
-                        var timeout;
-                        if (timeout) clearTimeout(timeout);
-                        timeout = setTimeout(function () {
-                            timeout = null;
-                            resizeDnnEditHtml();
-                        }, 50);
-                    });
                 }
-            }
 
-            function resizeDnnEditHtml() {
-                $('.ehCurrentContent').height($(window).height() - $('.ehActions').height() - $('.dnnEditHtml ').outerHeight(true) + $('.dnnEditHtml ').innerHeight());
-                $('window.frameElement, body, html').css('overflow', 'hidden');
-                if ($('.ehccContent.EditView').length) {
-                    // Ajuster la taille de l'éditeur en fonction du type (RadEditor, CKEditor, ou éditeur de base)
-                    // ... (code pour ajuster la taille de l'éditeur)
+                function resizeDnnEditHtml() {
+                    $('.ehCurrentContent').height($(window).height() - $('.ehActions').height() - $('.dnnEditHtml ').outerHeight(true) + $('.dnnEditHtml ').innerHeight());
+                    $('window.frameElement, body, html').css('overflow', 'hidden');
+                    if ($('.ehccContent.EditView').length) {
+                        // Ajuster la taille de l'éditeur en fonction du type (RadEditor, CKEditor, ou éditeur de base)
+                        // ... (code pour ajuster la taille de l'éditeur)
+                    }
                 }
-            }
 
-            $(document).ready(function () {
-                setupDnnEditHtml();
-                Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+                $(document).ready(function () {
                     setupDnnEditHtml();
-                });
+                    Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+                        setupDnnEditHtml();
+                    });
 
-                // Ajouter des gestionnaires d'événements pour les boutons
-                $('#cmdEdit').click(function () {
-                    // Logique pour passer en mode édition
-                });
+                    // Ajouter des gestionnaires d'événements pour les boutons
+                    $('#cmdEdit').click(function () {
+                        // Logique pour passer en mode édition
+                    });
 
-                $('#cmdPreview').click(function () {
-                    // Logique pour passer en mode prévisualisation
-                });
+                    $('#cmdPreview').click(function () {
+                        // Logique pour passer en mode prévisualisation
+                    });
 
-                $('#cmdHistory').click(function () {
-                    // Logique pour afficher l'historique
-                });
+                    $('#cmdHistory').click(function () {
+                        // Logique pour afficher l'historique
+                    });
 
-                $('#ddlRender').change(function () {
-                    // Logique pour changer le mode de rendu
-                });
+                    $('#ddlRender').change(function () {
+                        // Logique pour changer le mode de rendu
+                    });
 
-                $('#cmdMasterContent').click(function () {
-                    // Logique pour afficher/masquer le contenu maître
+                    $('#cmdMasterContent').click(function () {
+                        // Logique pour afficher/masquer le contenu maître
+                    });
                 });
-            });
-        }(jQuery, window.Sys));
-    </script>
-}
+            }(jQuery, window.Sys));
+        </script>
+    }
+*@

@@ -66,5 +66,7 @@ namespace DotNetNuke.Modules.Html.Models
         public int ItemID { get; set; }
 
         public int PortalId { get; set; }
+
+        public string PreviewContent { get; set; }
     }
 }

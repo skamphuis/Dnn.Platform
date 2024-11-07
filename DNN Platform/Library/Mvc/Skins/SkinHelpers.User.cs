@@ -32,113 +32,128 @@ namespace DotNetNuke.Web.Mvc.Skins
         {
             var portalSettings = PortalSettings.Current;
             var navigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
-            var userInfo = UserController.Instance.GetCurrentUserInfo();
 
             if (portalSettings.InErrorPageRequest() && !showInErrorPage)
             {
                 return MvcHtmlString.Empty;
             }
 
-            var userWrapperDiv = new TagBuilder("div");
-            userWrapperDiv.AddCssClass("registerGroup");
-
-            var userPropertiesDiv = new TagBuilder("div");
-            userPropertiesDiv.AddCssClass("userProperties");
-
-            var ul = new TagBuilder("ul");
-
-            ul.AddCssClass("buttonGroup");
-
-            if (!HttpContext.Current.Request.IsAuthenticated)
+            var registerText = Localization.GetString("Register", userResourceFile);
+            if (!string.IsNullOrEmpty(text))
             {
-                // Unauthenticated User Logic
-                if (portalSettings.UserRegistration != (int)Globals.PortalRegistrationType.NoRegistration &&
-                    (portalSettings.Users < portalSettings.UserQuota || portalSettings.UserQuota == 0))
+                registerText = text;
+                if (text.IndexOf("src=") != -1)
                 {
-                   // User Register
-                    var registerLi = new TagBuilder("li");
-                    registerLi.AddCssClass("userRegister");
+                    registerText = text.Replace("src=\"", "src=\"" + portalSettings.ActiveTab.SkinPath);
+                }
+            }
 
-                    var registerLink = new TagBuilder("a");
+            if (legacyMode)
+            {
+                if (portalSettings.UserRegistration == (int)Globals.PortalRegistrationType.NoRegistration ||
+                    (portalSettings.Users > portalSettings.UserQuota || portalSettings.UserQuota == 0))
+                {
+                    return MvcHtmlString.Empty;
+                }
+
+                var registerLink = new TagBuilder("a");
+                registerLink.AddCssClass("SkinObject");
+                if (!string.IsNullOrEmpty(cssClass))
+                {
                     registerLink.AddCssClass(cssClass);
-                    registerLink.Attributes.Add("rel", "nofollow");
-                    registerLink.InnerHtml = !string.IsNullOrEmpty(text) ? text.Replace("src=\"", "src=\"" + portalSettings.ActiveTab.SkinPath) : Localization.GetString("Register", userResourceFile);
-                    registerLink.Attributes.Add("href", !string.IsNullOrEmpty(url) ? url : Globals.RegisterURL(HttpUtility.UrlEncode(navigationManager.NavigateURL()), Null.NullString));
-
-                    if (portalSettings.EnablePopUps && portalSettings.RegisterTabId == Null.NullInteger/*&& !AuthenticationController.HasSocialAuthenticationEnabled(portalSettings)*/)
-                    {
-                        var clickEvent = "return " + UrlUtils.PopUpUrl(registerLink.Attributes["href"], portalSettings, true, false, 600, 950);
-                        registerLink.Attributes.Add("onclick", clickEvent);
-                    }
-
-                    registerLi.InnerHtml = registerLink.ToString();
-                    ul.InnerHtml += registerLi.ToString();
                 }
 
-                if (!portalSettings.HideLoginControl)
+                registerLink.Attributes.Add("rel", "nofollow");
+                registerLink.InnerHtml = registerText;
+                registerLink.Attributes.Add("href", !string.IsNullOrEmpty(url) ? url : Globals.RegisterURL(HttpUtility.UrlEncode(navigationManager.NavigateURL()), Null.NullString));
+
+                if (portalSettings.EnablePopUps && portalSettings.RegisterTabId == Null.NullInteger/*&& !AuthenticationController.HasSocialAuthenticationEnabled(portalSettings)*/)
                 {
-                    var loginLi = new TagBuilder("li");
-                    loginLi.AddCssClass("userLogin");
-
-                    var loginLink = new TagBuilder("a");
-                    loginLink.AddCssClass(cssClass);
-                    loginLink.Attributes.Add("rel", "nofollow");
-                    loginLink.InnerHtml = Localization.GetString("Login", userResourceFile);
-                    loginLink.Attributes.Add("href", Globals.LoginURL(HttpUtility.UrlEncode(HttpContext.Current.Request.RawUrl), HttpContext.Current.Request.QueryString["override"] != null));
-
-                    if (portalSettings.EnablePopUps && portalSettings.LoginTabId == Null.NullInteger/*&& !AuthenticationController.HasSocialAuthenticationEnabled(portalSettings)*/)
-                    {
-                        var clickEvent = "return " + UrlUtils.PopUpUrl(loginLink.Attributes["href"], portalSettings, true, false, 300, 650);
-                        loginLink.Attributes.Add("onclick", clickEvent);
-                    }
-
-                    loginLi.InnerHtml = loginLink.ToString();
-                    ul.InnerHtml += loginLi.ToString();
+                    var clickEvent = "return " + UrlUtils.PopUpUrl(registerLink.Attributes["href"], portalSettings, true, false, 600, 950);
+                    registerLink.Attributes.Add("onclick", clickEvent);
                 }
+
+                return new MvcHtmlString(registerLink.ToString());
             }
-            else if (userInfo.UserID != -1)
+            else
             {
-                // Add menu-items (viewProfile, userMessages, userNotifications, etc.)
-                if (showUnreadMessages)
+                var userWrapperDiv = new TagBuilder("div");
+                userWrapperDiv.AddCssClass("registerGroup");
+                var ul = new TagBuilder("ul");
+                ul.AddCssClass("buttonGroup");
+                if (!HttpContext.Current.Request.IsAuthenticated)
                 {
-                    // Create Messages
-                    var unreadMessages = InternalMessagingController.Instance.CountUnreadMessages(userInfo.UserID, PortalController.GetEffectivePortalId(userInfo.PortalID));
+                    // Unauthenticated User Logic
+                    if (portalSettings.UserRegistration != (int)Globals.PortalRegistrationType.NoRegistration &&
+                        (portalSettings.Users < portalSettings.UserQuota || portalSettings.UserQuota == 0))
+                    {
+                        // User Register
+                        var registerLi = new TagBuilder("li");
+                        registerLi.AddCssClass("userRegister");
 
-                    var messageLinkText = unreadMessages > 0 ? string.Format(Localization.GetString("Messages", userResourceFile), unreadMessages) : string.Format(Localization.GetString("NoMessages", userResourceFile));
-                    ul.InnerHtml += CreateMenuItem(messageLinkText, "userMessages", navigationManager.NavigateURL(GetMessageTab(portalSettings)));
+                        var registerLink = new TagBuilder("a");
+                        registerLink.AddCssClass(cssClass);
+                        registerLink.Attributes.Add("rel", "nofollow");
+                        registerLink.InnerHtml = !string.IsNullOrEmpty(text) ? text.Replace("src=\"", "src=\"" + portalSettings.ActiveTab.SkinPath) : Localization.GetString("Register", userResourceFile);
+                        registerLink.Attributes.Add("href", !string.IsNullOrEmpty(url) ? url : Globals.RegisterURL(HttpUtility.UrlEncode(navigationManager.NavigateURL()), Null.NullString));
 
-                    // Create Notifications
-                    var unreadAlerts = NotificationsController.Instance.CountNotifications(userInfo.UserID, PortalController.GetEffectivePortalId(userInfo.PortalID));
-                    var alertLink = navigationManager.NavigateURL(GetMessageTab(portalSettings), string.Empty, string.Format("userId={0}", userInfo.UserID), "view=notifications", "action=notifications");
-                    var alertLinkText = unreadAlerts > 0 ? string.Format(Localization.GetString("Notifications", userResourceFile), unreadAlerts) : string.Format(Localization.GetString("NoNotifications", userResourceFile));
+                        if (portalSettings.EnablePopUps && portalSettings.RegisterTabId == Null.NullInteger/*&& !AuthenticationController.HasSocialAuthenticationEnabled(portalSettings)*/)
+                        {
+                            var clickEvent = "return " + UrlUtils.PopUpUrl(registerLink.Attributes["href"], portalSettings, true, false, 600, 950);
+                            registerLink.Attributes.Add("onclick", clickEvent);
+                        }
 
-                    ul.InnerHtml += CreateMenuItem(alertLinkText, "userNotifications", alertLink);
+                        registerLi.InnerHtml = registerLink.ToString();
+                        ul.InnerHtml += registerLi.ToString();
+                    }
+                }
+                else
+                {
+                    var userInfo = UserController.Instance.GetCurrentUserInfo();
+                    if (userInfo.UserID != -1)
+                    {
+                        // Add menu-items (viewProfile, userMessages, userNotifications, etc.)
+                        if (showUnreadMessages)
+                        {
+                            // Create Messages
+                            var unreadMessages = InternalMessagingController.Instance.CountUnreadMessages(userInfo.UserID, PortalController.GetEffectivePortalId(userInfo.PortalID));
+
+                            var messageLinkText = unreadMessages > 0 ? string.Format(Localization.GetString("Messages", userResourceFile), unreadMessages) : string.Format(Localization.GetString("NoMessages", userResourceFile));
+                            ul.InnerHtml += CreateMenuItem(messageLinkText, "userMessages", navigationManager.NavigateURL(GetMessageTab(portalSettings)));
+
+                            // Create Notifications
+                            var unreadAlerts = NotificationsController.Instance.CountNotifications(userInfo.UserID, PortalController.GetEffectivePortalId(userInfo.PortalID));
+                            var alertLink = navigationManager.NavigateURL(GetMessageTab(portalSettings), string.Empty, string.Format("userId={0}", userInfo.UserID), "view=notifications", "action=notifications");
+                            var alertLinkText = unreadAlerts > 0 ? string.Format(Localization.GetString("Notifications", userResourceFile), unreadAlerts) : string.Format(Localization.GetString("NoNotifications", userResourceFile));
+
+                            ul.InnerHtml += CreateMenuItem(alertLinkText, "userNotifications", alertLink);
+                        }
+
+                        // Create User Display Name Link
+                        var userDisplayText = userInfo.DisplayName;
+                        var userDisplayTextUrl = Globals.UserProfileURL(userInfo.UserID);
+                        var userDisplayTextToolTip = Localization.GetString("VisitMyProfile", userResourceFile);
+
+                        ul.InnerHtml += CreateMenuItem(userDisplayText, "userDisplayName", userDisplayTextUrl);
+
+                        if (showAvatar)
+                        {
+                            var userProfileLi = new TagBuilder("li");
+                            userProfileLi.AddCssClass("userProfile");
+
+                            // Get the Profile Image
+                            var profileImg = new TagBuilder("img");
+                            profileImg.Attributes.Add("src", UserController.Instance.GetUserProfilePictureUrl(userInfo.UserID, 32, 32));
+                            profileImg.Attributes.Add("alt", Localization.GetString("ProfilePicture", userResourceFile));
+
+                            ul.InnerHtml += CreateMenuItem(profileImg.ToString(), "userProfileImg", userDisplayTextUrl);
+                        }
+                    }
                 }
 
-                // Create User Display Name Link
-                var userDisplayText = userInfo.DisplayName;
-                var userDisplayTextUrl = Globals.UserProfileURL(userInfo.UserID);
-                var userDisplayTextToolTip = Localization.GetString("VisitMyProfile", userResourceFile);
-
-                ul.InnerHtml += CreateMenuItem(userDisplayText, "userDisplayName", userDisplayTextUrl);
-
-                if (showAvatar)
-                {
-                    var userProfileLi = new TagBuilder("li");
-                    userProfileLi.AddCssClass("userProfile");
-
-                    // Get the Profile Image
-                    var profileImg = new TagBuilder("img");
-                    profileImg.Attributes.Add("src", UserController.Instance.GetUserProfilePictureUrl(userInfo.UserID, 32, 32));
-                    profileImg.Attributes.Add("alt", Localization.GetString("ProfilePicture", userResourceFile));
-
-                    ul.InnerHtml += CreateMenuItem(profileImg.ToString(), "userProfileImg", userDisplayTextUrl);
-                }
+                userWrapperDiv.InnerHtml = ul.ToString();
+                return new MvcHtmlString(userWrapperDiv.ToString());
             }
-
-            userPropertiesDiv.InnerHtml = ul.ToString();
-            userWrapperDiv.InnerHtml = userPropertiesDiv.ToString();
-            return new MvcHtmlString(userWrapperDiv.ToString());
         }
 
         private static string CreateMenuItem(string cssClass, string href, string resourceKey, bool isStrong = false)

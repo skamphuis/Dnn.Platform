@@ -110,6 +110,7 @@ namespace DotNetNuke.Framework.Controllers
             model.ModuleId = module.ModuleID;
             model.TabId = module.TabID;
             model.PortalId = this.PortalSettings.PortalId;
+            model.RedirectUrl = this.navigationManager.NavigateURL();
             int workflowID = this.htmlTextController.GetWorkflow(module.ModuleID, module.TabID, module.PortalID).Value;
 
             try
@@ -146,7 +147,6 @@ namespace DotNetNuke.Framework.Controllers
                 model.ShowMasterContentButton = false;
 
                 // model.RenderOptions = this.GetRenderOptions();
-                model.RedirectUrl = this.navigationManager.NavigateURL();
             }
             catch (Exception exc)
             {
@@ -157,6 +157,7 @@ namespace DotNetNuke.Framework.Controllers
 
             MvcClientResourceManager.RegisterScript(this.ControllerContext, "~/Resources/Shared/scripts/jquery/jquery.form.min.js");
             MvcClientResourceManager.RegisterStyleSheet(this.ControllerContext, "~/Portals/_default/Skins/_default/WebControlSkin/Default/GridView.default.css");
+            MvcClientResourceManager.RegisterStyleSheet(this.ControllerContext, "~/DesktopModules/HTML/edit.css");
             MvcClientResourceManager.RegisterScript(this.ControllerContext, "~/DesktopModules/HTML/edit.js");
             return this.View(module, model);
         }
@@ -224,6 +225,7 @@ namespace DotNetNuke.Framework.Controllers
         {
             model.ShowHistoryView = true;
             model.LocalResourceFile = "DesktopModules\\HTML\\App_LocalResources/EditHTML";
+            model.RedirectUrl = this.navigationManager.NavigateURL();
 
             // model.LocalResourceFile = Path.Combine(Path.GetDirectoryName(this.ActiveModule.ModuleControl.ControlSrc), Localization.LocalResourceDirectory + "/" + Path.GetFileNameWithoutExtension(this.ActiveModule.ModuleControl.ControlSrc));
             try
@@ -238,7 +240,36 @@ namespace DotNetNuke.Framework.Controllers
                 var versions = this.htmlTextController.GetAllHtmlText(model.ModuleId);
                 model.VersionItems = versions.Cast<HtmlTextInfo>().ToList();
 
-                return this.PartialView(this.ActiveModule, "_History", model);
+                // return this.PartialView(this.ActiveModule, "_History", model);
+                return this.PartialView(this.ActiveModule, "EditHtml", model);
+            }
+            catch (Exception exc)
+            {
+                // Gérer l'exception
+                // return this.View("Error", new ErrorViewModel { Message = exc.Message });
+                throw new Exception(exc.Message, exc);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ShowPreview(EditHtmlViewModel model)
+        {
+            model.ShowPreviewView = true;
+            model.LocalResourceFile = "DesktopModules\\HTML\\App_LocalResources/EditHTML";
+            model.RedirectUrl = this.navigationManager.NavigateURL();
+
+            // model.LocalResourceFile = Path.Combine(Path.GetDirectoryName(this.ActiveModule.ModuleControl.ControlSrc), Localization.LocalResourceDirectory + "/" + Path.GetFileNameWithoutExtension(this.ActiveModule.ModuleControl.ControlSrc));
+            try
+            {
+                int workflowID = this.htmlTextController.GetWorkflow(model.ModuleId, model.TabId, this.PortalSettings.PortalId).Value;
+                var htmlContent = this.GetLatestHTMLContent(workflowID, model.ModuleId);
+
+                var moduleSettings = this.settingsRepository.GetSettings(this.ActiveModule);
+                model.PreviewContent = HtmlTextController.FormatHtmlText(model.ModuleId, htmlContent.Content, moduleSettings, this.PortalSettings, null);
+
+                // return this.PartialView(this.ActiveModule, "_History", model);
+                return this.PartialView(this.ActiveModule, "EditHtml", model);
             }
             catch (Exception exc)
             {
@@ -250,8 +281,9 @@ namespace DotNetNuke.Framework.Controllers
 
         public ActionResult ShowEdit(EditHtmlViewModel model)
         {
-            model.ShowHistoryView = true;
+            model.ShowEditView = true;
             model.LocalResourceFile = "DesktopModules\\HTML\\App_LocalResources/EditHTML";
+            model.RedirectUrl = this.navigationManager.NavigateURL();
             try
             {
                 int workflowID = this.htmlTextController.GetWorkflow(model.ModuleId, model.TabId, this.PortalSettings.PortalId).Value;
@@ -284,7 +316,8 @@ namespace DotNetNuke.Framework.Controllers
                     this.PopulateModelWithInitialContent(model, workflowStates[0] as WorkflowStateInfo);
                 }
 
-                return this.PartialView(this.ActiveModule, "_Edit", model);
+                // return this.PartialView(this.ActiveModule, "_Edit", model);
+                return this.PartialView(this.ActiveModule, "EditHtml", model);
             }
             catch (Exception exc)
             {
@@ -313,6 +346,32 @@ namespace DotNetNuke.Framework.Controllers
             htmlContent.StateID = this.workflowStateController.GetFirstWorkflowStateID(workflowID);
             this.htmlTextController.UpdateHtmlText(htmlContent, this.htmlTextController.GetMaximumVersionHistory(this.PortalSettings.PortalId));
             return this.ShowEdit(model);
+        }
+
+        public ActionResult HistoryPreview(EditHtmlViewModel model)
+        {
+            model.ShowPreviewView = true;
+            model.LocalResourceFile = "DesktopModules\\HTML\\App_LocalResources/EditHTML";
+            model.RedirectUrl = this.navigationManager.NavigateURL();
+
+            // model.LocalResourceFile = Path.Combine(Path.GetDirectoryName(this.ActiveModule.ModuleControl.ControlSrc), Localization.LocalResourceDirectory + "/" + Path.GetFileNameWithoutExtension(this.ActiveModule.ModuleControl.ControlSrc));
+            try
+            {
+                int workflowID = this.htmlTextController.GetWorkflow(model.ModuleId, model.TabId, this.PortalSettings.PortalId).Value;
+                var htmlContent = this.htmlTextController.GetHtmlText(model.ModuleId, model.ItemID);
+
+                var moduleSettings = this.settingsRepository.GetSettings(this.ActiveModule);
+                model.PreviewContent = HtmlTextController.FormatHtmlText(model.ModuleId, htmlContent.Content, moduleSettings, this.PortalSettings, null);
+
+                // return this.PartialView(this.ActiveModule, "_History", model);
+                return this.PartialView(this.ActiveModule, "EditHtml", model);
+            }
+            catch (Exception exc)
+            {
+                // Gérer l'exception
+                // return this.View("Error", new ErrorViewModel { Message = exc.Message });
+                throw new Exception(exc.Message, exc);
+            }
         }
 
         [HttpGet]

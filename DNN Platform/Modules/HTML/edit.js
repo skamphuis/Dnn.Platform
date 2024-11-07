@@ -5,7 +5,6 @@ $(function () {
     var moduleId = $('#dnnEditHtml').attr('data-moduleid');
     var urlpars = 'tabid=' + tabId + '&PortalID=' + portalId + '&mid=' + moduleId;
 
-
     var editorConfigeditortxtContent = {
         allowedContent: false, autoGrow_bottomSpace: 0, autoGrow_maxHeight: 0,
         autoGrow_minHeight: 200, autoGrow_onStartup: false, autoParagraph: true,
@@ -94,7 +93,7 @@ $(function () {
         width: '99%',
         height: 200,
         maxFileSize: 29360128,
-        filebrowserBrowseUrl: '/Providers/HtmlEditorProviders/DNNConnect.CKE/Browser/Browser.aspx?Type=Link&' + urlpars +'&ckid=txtContent&mode=Default&lang=fr-FR',
+        filebrowserBrowseUrl: '/Providers/HtmlEditorProviders/DNNConnect.CKE/Browser/Browser.aspx?Type=Link&' + urlpars + '&ckid=txtContent&mode=Default&lang=fr-FR',
         filebrowserImageBrowseUrl: '/Providers/HtmlEditorProviders/DNNConnect.CKE/Browser/Browser.aspx?Type=Image&' + urlpars + '&ckid=txtContent&mode=Default&lang=fr-FR',
         filebrowserFlashBrowseUrl: '/Providers/HtmlEditorProviders/DNNConnect.CKE/Browser/Browser.aspx?Type=Flash&' + urlpars + '&ckid=txtContent&mode=Default&lang=fr-FR',
         filebrowserUploadUrl: '/Providers/HtmlEditorProviders/DNNConnect.CKE/Browser/Browser.aspx?Command=FileUpload&' + urlpars + '&ckid=txtContent&mode=Default&lang=fr-FR',
@@ -105,39 +104,57 @@ $(function () {
 
     CKEDITOR.replace('EditorContent', editorConfigeditortxtContent);
 
+    var initPage = function () {
 
-    $('#dnnEditHtml form').ajaxForm({
-        success: function () {
-            window.location = $('#dnnEditHtml').attr('data-returnurl') ;
-        },
-        beforeSerialize: function () {
-            for (var instanceName in CKEDITOR.instances)
-                CKEDITOR.instances[instanceName].updateElement();
-        }
-    });
-
-    $('#cmdHistory').click(function () {
-        var action = $(this).attr('data-action');
-        $('#dnnEditHtml form').ajaxSubmit({
-            url: action,
-            target: '.ehccContent',
-            success: initHistory
+        $('#dnnEditHtml form').ajaxForm({
+            success: function () {
+                window.location = $('#dnnEditHtml').attr('data-returnurl');
+            },
+            beforeSerialize: function () {
+                for (var instanceName in CKEDITOR.instances)
+                    CKEDITOR.instances[instanceName].updateElement();
+            }
         });
-        // return false to prevent normal browser submit and page navigation
-        return false;
-    });
 
-    $('#cmdEdit').click(function () {
-        var action = $(this).attr('data-action');
-        $('#dnnEditHtml form').ajaxSubmit({
-            url: action,
-            target: '.ehccContent',
+        $('#cmdHistory').click(function () {
+            var action = $(this).attr('data-action');
+            $('#dnnEditHtml form').ajaxSubmit({
+                url: action,
+                //target: '.ehccContent',
+                target: '#dnnEditHtml',
+                success: initPage
+            });
+            // return false to prevent normal browser submit and page navigation
+            return false;
         });
-        // return false to prevent normal browser submit and page navigation
-        return false;
-    });
 
-    var initHistory = function () {
+        $('#cmdPreview').click(function () {
+            var action = $(this).attr('data-action');
+            $('#dnnEditHtml form').ajaxSubmit({
+                url: action,
+                //target: '.ehccContent',
+                target: '#dnnEditHtml',
+                success: initPage
+            });
+            // return false to prevent normal browser submit and page navigation
+            return false;
+        });
+
+        $('#cmdEdit').click(function () {
+            var action = $(this).attr('data-action');
+            $('#dnnEditHtml form').ajaxSubmit({
+                url: action,
+                //target: '.ehccContent',
+                target: '#dnnEditHtml',
+                success: function () {
+                    initPage();
+                    CKEDITOR.replace('EditorContent', editorConfigeditortxtContent);
+                },
+            });
+            // return false to prevent normal browser submit and page navigation
+            return false;
+        });
+
         $('.js-history-remove').click(function () {
             var itemId = $(this).attr('data-itemid');
             var action = $(this).attr('data-action');
@@ -146,7 +163,12 @@ $(function () {
                 beforeSubmit: function (formData, jqForm, options) {
                     formData.push({ name: 'ItemID', value: itemId });
                 },
-                target: '.ehccContent',
+                //target: '.ehccContent',
+                target: '#dnnEditHtml',
+                success: function () {
+                    initPage();
+                    CKEDITOR.replace('EditorContent', editorConfigeditortxtContent);
+                },
             });
             // return false to prevent normal browser submit and page navigation
             return false;
@@ -159,7 +181,12 @@ $(function () {
                 beforeSubmit: function (formData, jqForm, options) {
                     formData.push({ name: 'ItemID', value: itemId });
                 },
-                target: '.ehccContent',
+                //target: '.ehccContent',
+                target: '#dnnEditHtml',
+                success: function () {
+                    initPage();
+                    CKEDITOR.replace('EditorContent', editorConfigeditortxtContent);
+                },
             });
             // return false to prevent normal browser submit and page navigation
             return false;
@@ -172,11 +199,17 @@ $(function () {
                 beforeSubmit: function (formData, jqForm, options) {
                     formData.push({ name: 'ItemID', value: itemId });
                 },
-                target: '.ehccContent',
+                //target: '.ehccContent',
+                target: '#dnnEditHtml',
+                success: function () {
+                    initPage();
+                    CKEDITOR.replace('EditorContent', editorConfigeditortxtContent);
+                },
             });
             // return false to prevent normal browser submit and page navigation
             return false;
         });
     }
-
+    initPage();
 });
+

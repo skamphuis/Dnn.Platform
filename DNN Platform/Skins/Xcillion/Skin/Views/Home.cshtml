@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div id="search-top" class="pull-right small-screens hidden-sm hidden-md hidden-lg">
-                        <dnn:SEARCH ID="dnnSearch2" runat="server" ShowSite="false" ShowWeb="false" EnableTheming="true" Submit="Search" CssClass="SearchButton" />
+                        @*<dnn:SEARCH ID="dnnSearch2" runat="server" ShowSite="false" ShowWeb="false" EnableTheming="true" Submit="Search" CssClass="SearchButton" />*@
                     </div>
                 </div>
             </div>
@@ -32,8 +32,8 @@
                     </div>
                     <a id="search-action" aria-label="Search"></a>
                     <div id="login" class="pull-right">
-                        @Html.Login(cssClass: "LoginLink")
-                        @*@Html.User()*@
+                        @Html.Login(cssClass: "LoginLink", legacyMode: false)
+                        @Html.User(legacyMode: false)
                     </div>
                 </div>
             </div>

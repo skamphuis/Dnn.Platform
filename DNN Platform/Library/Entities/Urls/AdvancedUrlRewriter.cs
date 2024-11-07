@@ -61,16 +61,22 @@ namespace DotNetNuke.Entities.Urls
         {
             var mvcCtls = new[] { "Module", "Terms", "Privacy" };
             bool mvcCtl = false;
-            foreach (var item in mvcCtls)
+
+            if (result.RewritePath.Contains("&ctl="))
             {
-                mvcCtl = mvcCtl || result.RewritePath.Contains("&ctl=" + item);
+                foreach (var item in mvcCtls)
+                {
+                    mvcCtl = mvcCtl || result.RewritePath.Contains("&ctl=" + item);
+                }
+            }
+            else
+            {
+                mvcCtl = result.RawUrl.EndsWith("mvc") && queryStringCol["mvc"] != "no";
             }
 
-            bool mvc = result.RawUrl.EndsWith("mvc") && queryStringCol["mvc"] != "no";
-            mvc = mvc || (mvcCtl && queryStringCol["mvc"] != "no");
-
-            mvc = mvc || queryStringCol["mvc"] == "yes";
-            return mvc;
+            mvcCtl = mvcCtl || (mvcCtl && queryStringCol["mvc"] != "no");
+            mvcCtl = mvcCtl || queryStringCol["mvc"] == "yes";
+            return mvcCtl;
         }
 
         internal static void RewriteAsChildAliasRoot(

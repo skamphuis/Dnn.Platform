@@ -28,19 +28,15 @@
                         @Html.Language(showMenu: false, showLinks: true)
                     </div>
                     <div class="search hidden-xs">
-                        <dnn:SEARCH ID="dnnSearch" runat="server" ShowSite="false" ShowWeb="false" EnableTheming="true" Submit="Search" CssClass="SearchButton" />
+                        @*<dnn:SEARCH ID="dnnSearch" runat="server" ShowSite="false" ShowWeb="false" EnableTheming="true" Submit="Search" CssClass="SearchButton" />*@
                     </div>
-                    <%-- search action for Search function on small devices --%>
+                    <!-- search action for Search function on small devices -->
                     <a id="search-action" aria-label="Search"></a>
                     <div id="login" class="pull-right">
-                        <div id="dnn_dnnLogin_loginGroup" class="loginGroup">
-                            <a id="dnn_dnnLogin_enhancedLoginLink" title="Connexion" class="LoginLink" rel="nofollow" onclick="return dnnModal.show('http://dnndev.local/Login?returnurl=/xxx&amp;popUp=true',/*showReturn*/true,300,650,true,'')" href="http://dnndev.local/Login?returnurl=%2fxxx">Connexion</a>
-                        </div>
-                        @Html.Login(cssClass: "LoginLink")
-                        @*
-                            <dnn:LOGIN ID="dnnLogin" CssClass="LoginLink" runat="server" LegacyMode="false" />
-                            <dnn:USER ID="dnnUser" runat="server" LegacyMode="false" />
-                        *@
+                        @*<dnn:LOGIN ID="dnnLogin" CssClass="LoginLink" runat="server" LegacyMode="false" />*@
+                        @Html.Login(cssClass: "LoginLink", legacyMode: false)
+                        @*<dnn:USER ID="dnnUser" runat="server" LegacyMode="false" />*@
+                        @Html.User(legacyMode: false)
                     </div>
                 </div>
             </div>
