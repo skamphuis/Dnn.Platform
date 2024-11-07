@@ -554,6 +554,7 @@
     <Compile Include="admin\Users\ViewProfile.ascx.designer.cs">
       <DependentUpon>ViewProfile.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\ModuleActionsViewController.cs" />
     <Compile Include="Controllers\ModuleActionsController.cs" />
     <Compile Include="Controllers\ModuleActionsDeleteModel.cs" />
     <Compile Include="Controllers\PrivacyController.cs" />
@@ -1270,11 +1271,12 @@
     <Content Include="Providers\DataProviders\SqlDataProvider\09.13.04.SqlDataProvider" />
     <Content Include="Views\web.config" />
     <Content Include="Views\Default\Layout.cshtml" />
-    <Content Include="Views\ModuleActions\Index.cshtml" />
+    <Content Include="Views\ModuleActionsView\Invoke.cshtml" />
     <Content Include="Views\PersonaBarContainer\Index.cshtml" />
     <Content Include="Views\Privacy\Index.cshtml" />
     <Content Include="Views\Terms\Index.cshtml" />
     <Content Include="Views\ModuleSettings\LoadDefaultSettings.cshtml" />
+    <Content Include="Views\ModuleSettingsView\Invoke.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

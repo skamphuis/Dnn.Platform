@@ -151,5 +151,7 @@ namespace DotNetNuke.Website.Models
         public string ModuleActionName { get; set; }
 
         public string ModuleLocalResourceFile { get; internal set; }
+
+        public string ModuleControlSrc { get; internal set; }
     }
 }

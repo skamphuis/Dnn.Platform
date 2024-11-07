@@ -156,6 +156,7 @@
     <Compile Include="Page\ModuleControllerBase.cs" />
     <Compile Include="Page\ModuleHelpers.cs" />
     <Compile Include="Page\ModuleModelBase.cs" />
+    <Compile Include="Page\ModuleSettingsViewController.cs" />
     <Compile Include="Page\ModuleSettingsController.cs" />
     <Compile Include="Page\ModuleSettingsModel.cs" />
     <Compile Include="Page\TabModel.cs" />

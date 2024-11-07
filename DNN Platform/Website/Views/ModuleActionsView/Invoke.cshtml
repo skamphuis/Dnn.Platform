@@ -145,8 +145,8 @@
 
                             var token = '@Html.AntiForgeryToken()';
                             token = $(token).val();
-
-                            $.post('@Url.Action("Delete")', {
+                             
+                            $.post('@Url.Action("Delete", "ModuleActions")', {
                                 moduleId: moduleId,
                                 tabId: @Model.ModuleContext.TabID,
                                 __RequestVerificationToken: token,

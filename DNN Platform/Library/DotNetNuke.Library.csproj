@@ -288,6 +288,7 @@
     <Compile Include="Mvc\Modules\ModuleHelpers.TextEditor.cs" />
     <Compile Include="Mvc\MvcClientAPI.cs" />
     <Compile Include="Mvc\MvcUtils.cs" />
+    <Compile Include="Mvc\HtmlHelpers.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.BreadCrumb.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.ControlPanel.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.Copyright.cs" />

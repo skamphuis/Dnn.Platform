@@ -131,6 +131,10 @@
     <Compile Include="Components\CompareWorkflowStatePermissions.cs" />
     <Compile Include="Components\DataProvider.cs" />
     <Compile Include="Components\EditHTMLModel.cs" />
+    <Compile Include="Mvc\HTMLSettingsViewController.cs" />
+    <Compile Include="Mvc\HTMLMyWorkViewController.cs" />
+    <Compile Include="Mvc\HTMLEditHTMLViewController.cs" />
+    <Compile Include="Mvc\HTMLHtmlModuleViewController.cs" />
     <Compile Include="Mvc\EditHtmlViewModel.cs" />
     <Compile Include="Mvc\DNN_HTMLController.cs" />
     <Compile Include="Components\HtmlModuleBase.cs">

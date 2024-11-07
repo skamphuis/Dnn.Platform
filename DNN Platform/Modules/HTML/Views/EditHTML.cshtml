@@ -69,13 +69,13 @@
                     <a href="@Model.RedirectUrl" class="dnnSecondaryAction">@Localization.GetString("cmdCancel", Model.LocalResourceFile)</a>
                 </li>
                 <li>
-                    <button type="button" data-action="@Url.Action("ShowEdit")" class="@(Model.ShowEditView ? "aspNetDisabled" : "dnnSecondaryAction" )" id="cmdEdit" @(Model.ShowEditView ? "disabled" : "" ) >@Localization.GetString("cmdEdit", Model.LocalResourceFile)</button>
+                    <button type="button" data-action="@Url.Action("ShowEdit", "DNN_HTML")" class="@(Model.ShowEditView ? "aspNetDisabled" : "dnnSecondaryAction" )" id="cmdEdit" @(Model.ShowEditView ? "disabled" : "" ) >@Localization.GetString("cmdEdit", Model.LocalResourceFile)</button>
                 </li>
                 <li>
-                    <button type="button" data-action="@Url.Action("ShowPreview")" class="@(Model.ShowPreviewView ? "aspNetDisabled" : "dnnSecondaryAction" )" id="cmdPreview" @(Model.ShowPreviewView ? "disabled" : "" )>@Localization.GetString("cmdPreview", Model.LocalResourceFile)</button>
+                    <button type="button" data-action="@Url.Action("ShowPreview", "DNN_HTML")" class="@(Model.ShowPreviewView ? "aspNetDisabled" : "dnnSecondaryAction" )" id="cmdPreview" @(Model.ShowPreviewView ? "disabled" : "" )>@Localization.GetString("cmdPreview", Model.LocalResourceFile)</button>
                 </li>
                 <li>
-                    <button type="button" data-action="@Url.Action("ShowHistory")" class="@(Model.ShowHistoryView ? "aspNetDisabled" : "dnnSecondaryAction" )" id="cmdHistory" @(Model.ShowHistoryView ? "disabled" : "" ) >@Localization.GetString("cmdHistory", Model.LocalResourceFile)</button>
+                    <button type="button" data-action="@Url.Action("ShowHistory", "DNN_HTML")" class="@(Model.ShowHistoryView ? "aspNetDisabled" : "dnnSecondaryAction" )" id="cmdHistory" @(Model.ShowHistoryView ? "disabled" : "" ) >@Localization.GetString("cmdHistory", Model.LocalResourceFile)</button>
                 </li>
                 <li>
                     <span class="separator"></span>

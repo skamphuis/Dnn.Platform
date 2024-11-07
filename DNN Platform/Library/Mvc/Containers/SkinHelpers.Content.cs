@@ -40,7 +40,7 @@ namespace DotNetNuke.Web.Mvc.Containers
                 MvcJavaScript.RequestRegistration(CommonJs.DnnPlugins);
                 if (model.EditMode && model.ModuleConfiguration.ModuleID > 0)
                 {
-                    moduleContentPaneDiv.InnerHtml += htmlHelper.Action("Index", "ModuleActions", model.ModuleConfiguration);
+                    moduleContentPaneDiv.InnerHtml += htmlHelper.Control("ModuleActions", model.ModuleConfiguration);
                 }
 
                 // register admin.css
@@ -60,8 +60,12 @@ namespace DotNetNuke.Web.Mvc.Containers
             var moduleDiv = new TagBuilder("div");
             moduleDiv.AddCssClass(model.ModuleHost.CssClass);
 
+            moduleDiv.InnerHtml += htmlHelper.Control(model.ModuleConfiguration);
+
+            /*
             try
             {
+                // module
                 moduleDiv.InnerHtml += htmlHelper.Action(model.ActionName, model.ControllerName, model.ModuleConfiguration);
             }
             catch (HttpException ex)
@@ -92,6 +96,7 @@ namespace DotNetNuke.Web.Mvc.Containers
                     // moduleDiv.InnerHtml += $"Error : {ex.Message} (Controller : {model.ControllerName}, Action : {model.ActionName}, module : {model.ModuleConfiguration.ModuleTitle}) {ex.StackTrace}";
                     throw new Exception($"Error : {ex.Message} (Controller : {model.ControllerName}, Action : {model.ActionName}, module : {model.ModuleConfiguration.ModuleID})", ex);
             }
+            */
 
             moduleContentPaneDiv.InnerHtml += moduleDiv.ToString();
             if (!string.IsNullOrEmpty(model.Footer))
