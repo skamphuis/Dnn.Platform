@@ -118,7 +118,7 @@ namespace DotNetNuke.Modules.Html.Mvc
         {
             model.ShowHistoryView = true;
             model.LocalResourceFile = "DesktopModules\\HTML\\App_LocalResources/EditHTML";
-            model.RedirectUrl = this.navigationManager.NavigateURL();
+            model.RedirectUrl = this.navigationManager.NavigateURL(model.TabId);
 
             // model.LocalResourceFile = Path.Combine(Path.GetDirectoryName(this.ActiveModule.ModuleControl.ControlSrc), Localization.LocalResourceDirectory + "/" + Path.GetFileNameWithoutExtension(this.ActiveModule.ModuleControl.ControlSrc));
             try
@@ -150,7 +150,7 @@ namespace DotNetNuke.Modules.Html.Mvc
         {
             model.ShowPreviewView = true;
             model.LocalResourceFile = "DesktopModules\\HTML\\App_LocalResources/EditHTML";
-            model.RedirectUrl = this.navigationManager.NavigateURL();
+            model.RedirectUrl = this.navigationManager.NavigateURL(model.TabId);
 
             // model.LocalResourceFile = Path.Combine(Path.GetDirectoryName(this.ActiveModule.ModuleControl.ControlSrc), Localization.LocalResourceDirectory + "/" + Path.GetFileNameWithoutExtension(this.ActiveModule.ModuleControl.ControlSrc));
             try
@@ -176,7 +176,7 @@ namespace DotNetNuke.Modules.Html.Mvc
         {
             model.ShowEditView = true;
             model.LocalResourceFile = "DesktopModules\\HTML\\App_LocalResources/EditHTML";
-            model.RedirectUrl = this.navigationManager.NavigateURL();
+            model.RedirectUrl = this.navigationManager.NavigateURL(model.TabId);
             try
             {
                 int workflowID = this.htmlTextController.GetWorkflow(model.ModuleId, model.TabId, this.PortalSettings.PortalId).Value;
@@ -245,7 +245,7 @@ namespace DotNetNuke.Modules.Html.Mvc
         {
             model.ShowPreviewView = true;
             model.LocalResourceFile = "DesktopModules\\HTML\\App_LocalResources/EditHTML";
-            model.RedirectUrl = this.navigationManager.NavigateURL();
+            model.RedirectUrl = this.navigationManager.NavigateURL(model.TabId);
 
             // model.LocalResourceFile = Path.Combine(Path.GetDirectoryName(this.ActiveModule.ModuleControl.ControlSrc), Localization.LocalResourceDirectory + "/" + Path.GetFileNameWithoutExtension(this.ActiveModule.ModuleControl.ControlSrc));
             try
