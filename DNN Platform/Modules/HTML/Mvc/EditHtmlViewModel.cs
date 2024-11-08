@@ -2,14 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information
 
-namespace DotNetNuke.Modules.Html.Models
+namespace DotNetNuke.Modules.Html.Mvc
 {
     using System.Collections.Generic;
     using System.Web.Mvc;
 
     using DotNetNuke.Web.Mvc.Page;
 
-    using static DotNetNuke.Framework.Controllers.DNN_HTMLController;
+    using static DotNetNuke.Modules.Html.Mvc.DNN_HTMLController;
 
     public class EditHtmlViewModel : ModuleModelBase
     {

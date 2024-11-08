@@ -69,7 +69,7 @@ namespace DotNetNuke.Modules.Html
                                 ModuleActionType.AddContent,
                                 "publish",
                                 "grant.gif",
-                                string.Empty,
+                                this.navigationManager.NavigateURL() + "?act=publish&mod=" + this.ModuleId + "&mvc=yes", // string.Empty,
                                 true,
                                 SecurityAccessLevel.Edit,
                                 true,

@@ -140,8 +140,8 @@
     <Compile Include="Components\HtmlModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Mvc\HtmlModuleControl.cs" />
-    <Compile Include="Components\HtmlModuleModel.cs" />
+    <Compile Include="Mvc\Control\HtmlModuleControl.cs" />
+    <Compile Include="Mvc\HtmlModuleModel.cs" />
     <Compile Include="Components\HtmlModuleSettings.cs" />
     <Compile Include="Components\HtmlModuleSettingsRepository.cs" />
     <Compile Include="Components\HtmlTextController.cs" />
@@ -152,7 +152,7 @@
     <Compile Include="Components\HtmlTextUserInfo.cs" />
     <Compile Include="Mvc\HtmlModuleSettingsModel.cs" />
     <Compile Include="Mvc\HtmlTextUserModel.cs" />
-    <Compile Include="Mvc\ModuleControlBase.cs" />
+    <Compile Include="Mvc\Control\ModuleControlBase.cs" />
     <Compile Include="Components\WorkflowStateController.cs" />
     <Compile Include="Components\WorkflowStateInfo.cs" />
     <Compile Include="Components\WorkflowStatePermissionCollection.cs" />
