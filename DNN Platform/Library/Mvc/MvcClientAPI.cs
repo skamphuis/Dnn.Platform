@@ -51,12 +51,18 @@ namespace DotNetNuke.Mvc
 
         public static void RegisterStartupScript(string key, string value)
         {
-            GetClientStartupScriptList().Add(key, value);
+            if (!GetClientStartupScriptList().ContainsKey(key))
+            {
+                GetClientStartupScriptList().Add(key, value);
+            }
         }
 
         public static void RegisterScript(string key, string value)
         {
-            GetClientStartupScriptList().Add(key, value);
+            if (!GetClientStartupScriptList().ContainsKey(key))
+            {
+                GetClientStartupScriptList().Add(key, value);
+            }
         }
     }
 }

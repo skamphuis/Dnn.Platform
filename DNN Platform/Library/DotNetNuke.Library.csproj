@@ -278,6 +278,10 @@
     <Compile Include="Mvc\Containers\SkinHelpers.Content.cs" />
     <Compile Include="Mvc\Containers\SkinHelpers.Title.cs" />
     <Compile Include="Mvc\Controllers\DnnPageController.cs" />
+    <Compile Include="Mvc\PermissionTriStateHelper.cs" />
+    <Compile Include="Mvc\Security\Controllers\ModulePermissionsGridController.cs" />
+    <Compile Include="Mvc\Security\Controllers\PermissionModel.cs" />
+    <Compile Include="Mvc\Security\Controllers\PermissionsGridController.cs" />
     <Compile Include="Mvc\Models\ModuleActionsModel.cs" />
     <Compile Include="Mvc\Models\ModuleHostModel.cs" />
     <Compile Include="Mvc\Models\ContainerModel.cs" />
@@ -289,6 +293,13 @@
     <Compile Include="Mvc\MvcClientAPI.cs" />
     <Compile Include="Mvc\MvcUtils.cs" />
     <Compile Include="Mvc\HtmlHelpers.cs" />
+    <Compile Include="Mvc\Security\Controllers\RoleModel.cs" />
+    <Compile Include="Mvc\Security\Controllers\UserModel.cs" />
+    <Compile Include="Mvc\Security\Models\ModulePermissionsGridViewModel.cs" />
+    <Compile Include="Mvc\Security\Models\PermissionsGridViewModel.cs" />
+    <Compile Include="Mvc\Security\Models\PermissionsUpdateModel.cs" />
+    <Compile Include="Mvc\Security\Models\PermissionTriStateModel.cs" />
+    <Compile Include="Mvc\Security\Models\PermissionUpdateModel.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.BreadCrumb.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.ControlPanel.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.Copyright.cs" />
@@ -2017,6 +2028,9 @@
   <ItemGroup>
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mvc\Security\Scripts\PermissionsGrid.js" />
   </ItemGroup>
   <PropertyGroup>
     <RootDirectory>$(MSBuildProjectDirectory)\..\..</RootDirectory>

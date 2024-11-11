@@ -71,10 +71,10 @@ namespace DotNetNuke.Entities.Urls
             }
             else
             {
-                mvcCtl = result.RawUrl.EndsWith("mvc") && queryStringCol["mvc"] != "no";
+                mvcCtl = result.RawUrl.EndsWith("mvc");
             }
 
-            mvcCtl = mvcCtl || (mvcCtl && queryStringCol["mvc"] != "no");
+            mvcCtl = mvcCtl && queryStringCol["mvc"] != "no";
             mvcCtl = mvcCtl || queryStringCol["mvc"] == "yes";
             return mvcCtl;
         }

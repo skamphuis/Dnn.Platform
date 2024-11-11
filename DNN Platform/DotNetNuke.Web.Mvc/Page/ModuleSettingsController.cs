@@ -8,12 +8,17 @@ namespace DotNetNuke.Website.Controllers
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Web.Mvc;
 
+    using DotNetNuke.Abstractions;
+    using DotNetNuke.Common;
     using DotNetNuke.Common.Utilities;
+    using DotNetNuke.Entities.Host;
     using DotNetNuke.Entities.Modules;
     using DotNetNuke.Entities.Modules.Definitions;
     using DotNetNuke.Entities.Portals;
+    using DotNetNuke.Entities.Tabs;
     using DotNetNuke.Framework.JavaScriptLibraries;
     using DotNetNuke.Security;
     using DotNetNuke.Security.Permissions;
@@ -22,15 +27,18 @@ namespace DotNetNuke.Website.Controllers
     using DotNetNuke.Web.Client.ClientResourceManagement;
     using DotNetNuke.Web.Mvc;
     using DotNetNuke.Website.Models;
+    using Microsoft.Extensions.DependencyInjection;
 
     public class ModuleSettingsController : ModuleControllerBase
     {
+        private readonly INavigationManager navigationManager;
         private readonly ModuleController moduleController;
         private int moduleId = -1;
         private ModuleInfo module;
 
         public ModuleSettingsController()
         {
+            this.navigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
             this.moduleController = new ModuleController();
         }
 
@@ -321,6 +329,70 @@ namespace DotNetNuke.Website.Controllers
             }
 
             model.AvailableTabs = new List<TabModel>();
+            var tabsByModule = TabController.Instance.GetTabsByModuleID(this.moduleId);
+            tabsByModule.Remove(this.TabId);
+            model.InstalledOnTabs = tabsByModule.Select(t => new TabModel()
+            {
+                Id = t.Value.TabID,
+                Name = t.Value.TabName,
+                InstalledOnLink = this.GetInstalledOnLink(t.Value),
+                InstalledOnSite = this.GetInstalledOnSite(t.Value),
+            });
+        }
+
+        private string GetInstalledOnLink(TabInfo tab)
+        {
+            var returnValue = new StringBuilder();
+            if (tab != null)
+            {
+                var index = 0;
+                TabController.Instance.PopulateBreadCrumbs(ref tab);
+                var defaultAlias = PortalAliasController.Instance.GetPortalAliasesByPortalId(tab.IsSuperTab ? Host.HostPortalID : tab.PortalID)
+                                        .OrderByDescending(a => a.IsPrimary)
+                                        .FirstOrDefault();
+                var portalSettings = new PortalSettings(tab.PortalID)
+                {
+                    PortalAlias = defaultAlias,
+                };
+
+                var tabUrl = this.navigationManager.NavigateURL(tab.TabID, portalSettings, string.Empty);
+
+                foreach (TabInfo t in tab.BreadCrumbs)
+                {
+                    if (index > 0)
+                    {
+                        returnValue.Append(" > ");
+                    }
+
+                    if (tab.BreadCrumbs.Count - 1 == index)
+                    {
+                        returnValue.AppendFormat("<a href=\"{0}\">{1}</a>", tabUrl, t.LocalizedTabName);
+                    }
+                    else
+                    {
+                        returnValue.AppendFormat("{0}", t.LocalizedTabName);
+                    }
+
+                    index = index + 1;
+                }
+            }
+
+            return returnValue.ToString();
+        }
+
+        private string GetInstalledOnSite(TabInfo tab)
+        {
+            string returnValue = string.Empty;
+            if (tab != null)
+            {
+                var portal = PortalController.Instance.GetPortal(tab.PortalID);
+                if (portal != null)
+                {
+                    returnValue = portal.PortalName;
+                }
+            }
+
+            return returnValue;
         }
 
         private void BindContainers(ModuleSettingsModel model, ModuleInfo module)

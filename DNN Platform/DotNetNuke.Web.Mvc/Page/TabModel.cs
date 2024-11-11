@@ -7,6 +7,10 @@ namespace DotNetNuke.Website.Models
     {
         public string Name { get; set; }
 
-        public string Id { get; set; }
+        public int Id { get; set; }
+
+        public string InstalledOnSite { get; set; }
+
+        public string InstalledOnLink { get; set; }
     }
 }

@@ -142,7 +142,7 @@ namespace DotNetNuke.Website.Models
 
         public string IsShareableCheckBox { get; set; }
 
-        public IEnumerable<TabInfo> InstalledOnTabs { get; set; }
+        public IEnumerable<TabModel> InstalledOnTabs { get; set; }
 
         public string ReturnUrl { get; internal set; }
 

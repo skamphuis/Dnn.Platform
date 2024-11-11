@@ -124,7 +124,32 @@
                 <fieldset>
                     <div>
                         <div class="dnnFormItem">
-                            @*@Html.Partial("_InstalledOnGrid", Model.InstalledOnTabs)*@
+                        @if (Model.InstalledOnTabs != null && Model.InstalledOnTabs.Any())
+                        {
+                            <table class="dnn-grid">
+                                <thead>
+                                    <tr>
+                                        <th style="width:150px">Site</th>
+                                        <th>Page</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.InstalledOnTabs)
+                                    {
+                                        <tr>
+                                            <td>@item.InstalledOnSite</td>
+                                            <td>@item.InstalledOnLink</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <div class="dnnFormMessage dnnFormWarning">
+                                <label>@Localization.GetString("lblNoRecords", LocalResourceFile)</label>
+                            </div>
+                        }
                         </div>
                     </div>
                 </fieldset>
@@ -136,6 +161,9 @@
                 <fieldset>
                     <div id="permissionsRow">
                         <!-- Ajoutez ici le contrôle pour les permissions -->
+                        @Html.Action("Index", "ModulePermissionsGrid", new { tabId = Model.TabId, moduleId = Model.ModuleId, inheritViewPermissionsFromTab = Model.InheritViewPermissions })
+                        <div class="dnnClear"></div>
+                        @Html.EditorFor(model => model.InheritViewPermissions) @Html.Raw(Localization.GetString("InheritPermissions", LocalResourceFile))
                     </div>
                 </fieldset>
             </div>
@@ -239,7 +267,7 @@
 
                 <h2 id="dnnPanel-ModuleOtherSettings" class="dnnFormSectionHead">
                     <a href="" class="dnnSectionExpanded">
-                        <%=LocalizeString("OtherSettings")%>
+                        <a href="" class="dnnSectionExpanded">@Localization.GetString("OtherSettings", LocalResourceFile)</a>
                     </a>
                 </h2>
                 <fieldset>
@@ -301,9 +329,6 @@
                 <label>@Localization.GetString("LastModifiedOn")</label>
                 <span>@Model.LastModifiedOnDate.ToString("g")</span>
             </div>*@
-
-
-
     </div>
 </div>
 
