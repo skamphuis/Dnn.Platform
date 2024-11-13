@@ -19,6 +19,7 @@
                 <div class="col-md-6">
                     <div id="search-top" class="pull-right small-screens hidden-sm hidden-md hidden-lg">
                         @*<dnn:SEARCH ID="dnnSearch2" runat="server" ShowSite="false" ShowWeb="false" EnableTheming="true" Submit="Search" CssClass="SearchButton" />*@
+                        @Html.Search(id: "dnnSearch2", showSite: false, showWeb: false, submit: "Search", cssClass: "SearchButton")
                     </div>
                 </div>
             </div>
@@ -28,7 +29,8 @@
                         @Html.Language(showMenu: false, showLinks: true)
                     </div>
                     <div class="search hidden-xs">
-                        <dnn:SEARCH ID="dnnSearch" runat="server" ShowSite="false" ShowWeb="false" EnableTheming="true" Submit="Search" CssClass="SearchButton" />
+                        @*<dnn:SEARCH ID="dnnSearch" runat="server" ShowSite="false" ShowWeb="false" EnableTheming="true" Submit="Search" CssClass="SearchButton" />*@
+                        @Html.Search(id: "dnnSearch", showSite: false, showWeb: false, submit: "Search", cssClass: "SearchButton")
                     </div>
                     <a id="search-action" aria-label="Search"></a>
                     <div id="login" class="pull-right">

@@ -323,12 +323,12 @@
     <Compile Include="Mvc\Skins\SkinHelpers.LinkToTabletSite.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.Login.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.Logo.cs" />
+    <Compile Include="Mvc\Skins\SkinHelpers.Search.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.SkinPartial.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.Meta.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.ModuleMessage.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.Pane.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.Privacy.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Search.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.Styles.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.Tags.cs" />
     <Compile Include="Mvc\Skins\SkinHelpers.Terms.cs" />

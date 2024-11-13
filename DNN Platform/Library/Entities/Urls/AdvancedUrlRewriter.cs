@@ -68,6 +68,11 @@ namespace DotNetNuke.Entities.Urls
                 {
                     mvcCtl = mvcCtl || result.RewritePath.Contains("&ctl=" + item);
                 }
+
+                if (mvcCtl && result.RewritePath.Contains("&ctl=Module"))
+                {
+                    mvcCtl = queryStringCol["ReturnURL"] != null && queryStringCol["ReturnURL"].EndsWith("mvc");
+                }
             }
             else
             {

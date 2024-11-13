@@ -5,115 +5,379 @@
 namespace DotNetNuke.Web.Mvc.Skins
 {
     using System;
+    using System.Collections;
+    using System.Security.Policy;
     using System.Web;
     using System.Web.Mvc;
 
     using DotNetNuke.Abstractions;
     using DotNetNuke.Common;
+    using DotNetNuke.Common.Utilities;
+    using DotNetNuke.Entities.Host;
     using DotNetNuke.Entities.Icons;
+    using DotNetNuke.Entities.Modules;
     using DotNetNuke.Entities.Portals;
     using DotNetNuke.Services.Localization;
+    using DotNetNuke.Web.Client;
+    using DotNetNuke.Web.Client.ClientResourceManagement;
     using Microsoft.Extensions.DependencyInjection;
 
     public static partial class SkinHelpers
     {
-        private const string SearchAscxFileName = "Search.ascx";
+        private const string MyFileName = "Search.ascx";
 
-        public static IHtmlString Search(this HtmlHelper<DotNetNuke.Framework.Models.PageModel> helper, string cssClass = "SkinObject", bool showSite = true, bool showWeb = true, bool useWebForSite = false, bool useDropDownList = false, int minCharRequired = 2, int autoSearchDelayInMilliSecond = 400, bool enableWildSearch = true)
+        public static MvcHtmlString Search(
+            this HtmlHelper helper,
+            string id,
+            bool useDropDownList = false,
+            bool showWeb = true,
+            bool showSite = true,
+            string cssClass = "",
+            string submit = null,
+            string webIconURL = null,
+            string webText = null,
+            string webToolTip = null,
+            string webUrl = null,
+            string siteText = null,
+            bool useWebForSite = false,
+            bool enableWildSearch = true,
+            int minCharRequired = 2,
+            int autoSearchDelayInMilliSecond = 400)
         {
-            var portalSettings = PortalSettings.Current;
-            var navigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
+            Framework.ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
+            MvcClientResourceManager.RegisterStyleSheet(helper.ViewContext, "~/Resources/Search/SearchSkinObjectPreview.css", FileOrder.Css.ModuleCss);
+            MvcClientResourceManager.RegisterScript(helper.ViewContext, "~/Resources/Search/SearchSkinObjectPreview.js");
 
-            var searchContainer = new TagBuilder("div");
-            searchContainer.AddCssClass("SearchContainer");
+            var searchType = "S";
+            /*
+            if (this.WebRadioButton.Visible)
+            {
+                if (this.WebRadioButton.Checked)
+                {
+                    this.SearchType = "W";
+                }
+            }
+            */
+            if (string.IsNullOrEmpty(webIconURL))
+            {
+                webIconURL = IconController.IconURL("GoogleSearch");
+            }
+
+            if (string.IsNullOrEmpty(webText))
+            {
+                webUrl = Localization.GetString("Web", SkinHelpers.GetSkinsResourceFile(MyFileName));
+            }
+
+            if (string.IsNullOrEmpty(webToolTip))
+            {
+                webUrl = Localization.GetString("Web.ToolTip", SkinHelpers.GetSkinsResourceFile(MyFileName));
+            }
+
+            if (string.IsNullOrEmpty(webUrl))
+            {
+                webUrl = Localization.GetString("URL", SkinHelpers.GetSkinsResourceFile(MyFileName));
+            }
+
+            var searchUrl = SkinHelpers.ExecuteSearchUrl(string.Empty, searchType, useWebForSite, webUrl);
+            if (!useDropDownList)
+            {
+                return BuildClassicSearch(id, showWeb, showSite, cssClass, submit, webText, siteText, enableWildSearch, minCharRequired, autoSearchDelayInMilliSecond, searchUrl);
+            }
+
+            return BuildDropDownSearch(id, cssClass, submit, webText, siteText, enableWildSearch, minCharRequired, autoSearchDelayInMilliSecond, searchUrl);
+        }
+
+        private static MvcHtmlString BuildClassicSearch(
+            string id,
+            bool showWeb,
+            bool showSite,
+            string cssClass,
+            string submit,
+            string webText,
+            string siteText,
+            bool enableWildSearch,
+            int minCharRequired,
+            int autoSearchDelayInMilliSecond,
+            string searchUrl)
+        {
+            var container = new TagBuilder("span");
+            container.GenerateId("dnn_" + id + "_ClassicSearch");
+            var containerId = container.Attributes["id"];
+
+            if (showWeb)
+            {
+                var radio = new TagBuilder("input");
+                radio.Attributes["type"] = "radio";
+                radio.Attributes["name"] = "SearchType";
+                radio.Attributes["value"] = "W";
+                radio.Attributes["id"] = "dnn_" + id + "WebRadioButton";
+                radio.Attributes["class"] = cssClass;
+                radio.Attributes["checked"] = "checked";
+                container.InnerHtml += radio.ToString(TagRenderMode.SelfClosing);
+
+                var label = new TagBuilder("label");
+                label.Attributes["for"] = "WebRadioButton";
+                label.SetInnerText(webText ?? Localization.GetString("Web", GetSkinsResourceFile(MyFileName)));
+                container.InnerHtml += label.ToString();
+            }
+
+            if (showSite)
+            {
+                var radio = new TagBuilder("input");
+                radio.Attributes["type"] = "radio";
+                radio.Attributes["name"] = "SearchType";
+                radio.Attributes["value"] = "S";
+                radio.Attributes["id"] = "dnn_" + id + "SiteRadioButton";
+                radio.Attributes["class"] = cssClass;
+                container.InnerHtml += radio.ToString(TagRenderMode.SelfClosing);
+
+                var label = new TagBuilder("label");
+                label.Attributes["for"] = "SiteRadioButton";
+                label.SetInnerText(siteText ?? Localization.GetString("Site", GetSkinsResourceFile(MyFileName)));
+                container.InnerHtml += label.ToString();
+            }
+
+            container.InnerHtml += BuildSearchInput(id, "txtSearch", "NormalTextBox");
+            container.InnerHtml += BuildSearchButton(cssClass, submit, searchUrl);
+
+            return new MvcHtmlString(container.ToString() + GetInitScript(false, enableWildSearch, minCharRequired, autoSearchDelayInMilliSecond, containerId));
+        }
+
+        private static MvcHtmlString BuildDropDownSearch(
+            string id,
+            string cssClass,
+            string submit,
+            string webText,
+            string siteText,
+            bool enableWildSearch,
+            int minCharRequired,
+            int autoSearchDelayInMilliSecond,
+            string searchUrl)
+        {
+            var container = new TagBuilder("div");
+            container.GenerateId("dnn" + id + "DropDownSearch");
+            container.AddCssClass("SearchContainer");
+            var containerId = container.Attributes["id"];
 
             var searchBorder = new TagBuilder("div");
             searchBorder.AddCssClass("SearchBorder");
 
             var searchIcon = new TagBuilder("div");
+            searchIcon.GenerateId("dnn" + id + "SearchIcon");
             searchIcon.AddCssClass("SearchIcon");
 
-            var downArrow = new TagBuilder("img");
-            downArrow.Attributes.Add("src", IconController.IconURL("Action"));
-            searchIcon.InnerHtml = downArrow.ToString();
+            var img = new TagBuilder("img");
+            img.Attributes["src"] = IconController.IconURL("Action");
+            img.Attributes["alt"] = Localization.GetString("DropDownGlyph.AltText", GetSkinsResourceFile(MyFileName));
+            searchIcon.InnerHtml = img.ToString(TagRenderMode.SelfClosing);
 
-            var searchInputContainer = new TagBuilder("span");
-            searchInputContainer.AddCssClass("searchInputContainer");
-            searchInputContainer.Attributes.Add("data-moreresults", Localization.GetSafeJSString("SeeMoreResults", GetSkinsResourceFile(SearchAscxFileName)));
-            searchInputContainer.Attributes.Add("data-noresult", Localization.GetSafeJSString("NoResult", GetSkinsResourceFile(SearchAscxFileName)));
+            searchBorder.InnerHtml += searchIcon.ToString();
+            searchBorder.InnerHtml += BuildSearchInput(id, "txtSearchNew", "SearchTextBox");
 
-            var txtSearchNew = new TagBuilder("input");
-            txtSearchNew.Attributes.Add("type", "text");
-            txtSearchNew.AddCssClass("SearchTextBox");
-            txtSearchNew.Attributes.Add("maxlength", "255");
-            txtSearchNew.Attributes.Add("aria-label", "Search");
-            txtSearchNew.Attributes.Add("autocomplete", "off");
-            txtSearchNew.Attributes.Add("placeholder", Localization.GetSafeJSString("Placeholder", GetSkinsResourceFile(SearchAscxFileName)));
-            searchInputContainer.InnerHtml = txtSearchNew.ToString();
+            var choices = new TagBuilder("ul");
+            choices.GenerateId("SearchChoices");
 
-            var clearText = new TagBuilder("a");
-            clearText.AddCssClass("dnnSearchBoxClearText");
-            clearText.Attributes.Add("title", Localization.GetSafeJSString("SearchClearQuery", GetSkinsResourceFile(SearchAscxFileName)));
-            searchInputContainer.InnerHtml += clearText.ToString();
+            var siteLi = new TagBuilder("li");
+            siteLi.GenerateId("dnn" + id + "_SearchIconSite");
+            siteLi.SetInnerText(siteText ?? Localization.GetString("Site", GetSkinsResourceFile(MyFileName)));
+            choices.InnerHtml += siteLi.ToString();
 
-            searchBorder.InnerHtml = searchIcon.ToString() + searchInputContainer.ToString();
+            var webLi = new TagBuilder("li");
+            webLi.GenerateId("SearchIconWeb");
+            webLi.SetInnerText(webText ?? Localization.GetString("Web", GetSkinsResourceFile(MyFileName)));
+            choices.InnerHtml += webLi.ToString();
 
-            var searchChoices = new TagBuilder("ul");
-            searchChoices.AddCssClass("SearchChoices");
+            searchBorder.InnerHtml += choices.ToString();
+            container.InnerHtml = searchBorder.ToString() + BuildSearchButton(cssClass, submit, searchUrl);
 
-            var searchIconSite = new TagBuilder("li");
-            searchIconSite.AddCssClass("SearchIconSite");
-            searchIconSite.SetInnerText(Localization.GetString("Site", GetSkinsResourceFile(SearchAscxFileName)));
-            searchChoices.InnerHtml = searchIconSite.ToString();
+            return new MvcHtmlString(container.ToString() + GetInitScript(true, enableWildSearch, minCharRequired, autoSearchDelayInMilliSecond, containerId));
+        }
 
-            var searchIconWeb = new TagBuilder("li");
-            searchIconWeb.AddCssClass("SearchIconWeb");
-            searchIconWeb.SetInnerText(Localization.GetString("Web", GetSkinsResourceFile(SearchAscxFileName)));
-            searchChoices.InnerHtml += searchIconWeb.ToString();
+        private static string BuildSearchInput(string id, string inputId, string cssClass)
+        {
+            var container = new TagBuilder("span");
+            container.AddCssClass("searchInputContainer");
+            container.Attributes["data-moreresults"] = GetSeeMoreText();
+            container.Attributes["data-noresult"] = GetNoResultText();
 
-            searchBorder.InnerHtml += searchChoices.ToString();
+            var input = new TagBuilder("input");
+            input.Attributes["type"] = "text";
+            input.Attributes["id"] = "dnn_" + id + "_" + inputId;
+            input.Attributes["class"] = cssClass;
+            input.Attributes["maxlength"] = "255";
+            input.Attributes["autocomplete"] = "off";
+            input.Attributes["placeholder"] = GetPlaceholderText();
+            input.Attributes["aria-label"] = "Search";
 
-            var cmdSearchNew = new TagBuilder("button");
-            cmdSearchNew.AddCssClass("SkinObject SearchButton");
-            cmdSearchNew.SetInnerText(Localization.GetString("Search", GetSkinsResourceFile(SearchAscxFileName)));
-            searchBorder.InnerHtml += cmdSearchNew.ToString();
+            var clear = new TagBuilder("a");
+            clear.AddCssClass("dnnSearchBoxClearText");
+            clear.Attributes["title"] = GetClearQueryText();
 
-            searchContainer.InnerHtml = searchBorder.ToString();
+            container.InnerHtml = input.ToString(TagRenderMode.SelfClosing) + clear.ToString();
+            return container.ToString();
+        }
 
-            var script = new TagBuilder("script");
-            script.Attributes.Add("type", "text/javascript");
-            script.InnerHtml = @"
-                $(function() {
-                    if (typeof dnn != 'undefined' && typeof dnn.searchSkinObject != 'undefined') {
-                        var searchSkinObject = new dnn.searchSkinObject({
-                            delayTriggerAutoSearch : " + autoSearchDelayInMilliSecond + @",
-                            minCharRequiredTriggerAutoSearch : " + minCharRequired + @",
-                            searchType: 'S',
-                            enableWildSearch: " + enableWildSearch.ToString().ToLowerInvariant() + @",
-                            cultureCode: '" + System.Threading.Thread.CurrentThread.CurrentCulture.ToString() + @"',
-                            portalId: " + portalSettings.PortalId + @"
-                        });
+        private static string BuildSearchButton(string cssClass, string submit, string searchUrl)
+        {
+            var button = new TagBuilder("a");
+            button.AddCssClass("SearchButton " + cssClass);
+            button.Attributes["href"] = searchUrl; // "#";
+            button.InnerHtml = submit ?? Localization.GetString("Search", GetSkinsResourceFile(MyFileName));
+            return button.ToString();
+        }
+
+        private static string GetInitScript(bool useDropDownList, bool enableWildSearch, int minCharRequired, int autoSearchDelayInMilliSecond, string id)
+        {
+            return string.Format(
+                @"
+                <script>
+                $(function() {{
+                    if (typeof dnn != 'undefined' && typeof dnn.searchSkinObject != 'undefined') {{
+                        var searchSkinObject = new dnn.searchSkinObject({{
+                            delayTriggerAutoSearch: {0},
+                            minCharRequiredTriggerAutoSearch: {1},
+                            searchType: '{2}',
+                            enableWildSearch: {3},
+                            cultureCode: '{4}',
+                            portalId: {5}
+                        }});
                         searchSkinObject.init();
+                        
+                        {6}
 
-                        if (!" + useDropDownList.ToString().ToLowerInvariant() + @") {
-                            var siteBtn = $('#" + searchIconSite.Attributes["id"] + @"');
-                            var webBtn = $('#" + searchIconWeb.Attributes["id"] + @"');
-                            var clickHandler = function() {
-                                if (siteBtn.is(':checked')) searchSkinObject.settings.searchType = 'S';
-                                else searchSkinObject.settings.searchType = 'W';
-                            };
-                            siteBtn.on('change', clickHandler);
-                            webBtn.on('change', clickHandler);
-                        } else {
-                            if (typeof dnn.initDropdownSearch != 'undefined') {
-                                dnn.initDropdownSearch(searchSkinObject);
+                        $('#{7} .SearchButton').click(function(){{ 
+                            window.location = $(this).attr('href')+'?Search='+$('#{7} input').val(); 
+                            return false; 
+                        }})
+                    }}
+                }});
+                </script>",
+                autoSearchDelayInMilliSecond,
+                minCharRequired,
+                "S",
+                enableWildSearch.ToString().ToLowerInvariant(),
+                System.Threading.Thread.CurrentThread.CurrentCulture.ToString(),
+                PortalSettings.Current.PortalId,
+                useDropDownList ? "if (typeof dnn.initDropdownSearch != 'undefined') { dnn.initDropdownSearch(searchSkinObject); }" : string.Empty,
+                id);
+        }
+
+        private static string GetSeeMoreText()
+        {
+            return Localization.GetSafeJSString("SeeMoreResults", GetSkinsResourceFile(MyFileName));
+        }
+
+        private static string GetNoResultText()
+        {
+            return Localization.GetSafeJSString("NoResult", GetSkinsResourceFile(MyFileName));
+        }
+
+        private static string GetClearQueryText()
+        {
+            return Localization.GetSafeJSString("SearchClearQuery", GetSkinsResourceFile(MyFileName));
+        }
+
+        private static string GetPlaceholderText()
+        {
+            return Localization.GetSafeJSString("Placeholder", GetSkinsResourceFile(MyFileName));
+        }
+
+        private static string ExecuteSearchUrl(string searchText, string searchType, bool useWebForSite, string webURL)
+        {
+            PortalSettings portalSettings = PortalSettings.Current;
+            var navigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
+            int searchTabId = SkinHelpers.GetSearchTabId(portalSettings);
+
+            if (searchTabId == Null.NullInteger)
+            {
+                return string.Empty;
+            }
+
+            string strURL;
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                switch (searchType)
+                {
+                    case "S":
+                        // site
+                        if (useWebForSite)
+                        {
+                            /*
+                            strURL = this.SiteURL;
+                            if (!string.IsNullOrEmpty(strURL))
+                            {
+                                strURL = strURL.Replace("[TEXT]", this.Server.UrlEncode(searchText));
+                                strURL = strURL.Replace("[DOMAIN]", this.Request.Url.Host);
+                                UrlUtils.OpenNewWindow(this.Page, this.GetType(), strURL);
+                            }
+                            */
+                            return string.Empty;
+                        }
+                        else
+                        {
+                            if (Host.UseFriendlyUrls)
+                            {
+                                return navigationManager.NavigateURL(searchTabId) /* + "?Search=" + this.Server.UrlEncode(searchText)*/;
+                            }
+                            else
+                            {
+                                return navigationManager.NavigateURL(searchTabId) /* + "&Search=" + this.Server.UrlEncode(searchText)*/;
                             }
                         }
-                    }
-                });
-            ";
 
-            return new MvcHtmlString(searchContainer.ToString() + script.ToString());
+                    case "W":
+                        // web
+                        strURL = webURL;
+                        if (!string.IsNullOrEmpty(strURL))
+                        {
+                            /*
+                            strURL = strURL.Replace("[TEXT]", this.Server.UrlEncode(searchText));
+                            strURL = strURL.Replace("[DOMAIN]", string.Empty);
+                            UrlUtils.OpenNewWindow(this.Page, this.GetType(), strURL);
+                            */
+                        }
+
+                        return string.Empty;
+                }
+            }
+            else
+            {
+                if (Host.UseFriendlyUrls)
+                {
+                    return navigationManager.NavigateURL(searchTabId);
+                }
+                else
+                {
+                    return navigationManager.NavigateURL(searchTabId);
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private static int GetSearchTabId(PortalSettings portalSettings)
+        {
+            int searchTabId = portalSettings.SearchTabId;
+            if (searchTabId == Null.NullInteger)
+            {
+                ArrayList arrModules = ModuleController.Instance.GetModulesByDefinition(portalSettings.PortalId, "Search Results");
+                if (arrModules.Count > 1)
+                {
+                    foreach (ModuleInfo searchModule in arrModules)
+                    {
+                        if (searchModule.CultureCode == portalSettings.CultureCode)
+                        {
+                            searchTabId = searchModule.TabID;
+                        }
+                    }
+                }
+                else if (arrModules.Count == 1)
+                {
+                    searchTabId = ((ModuleInfo)arrModules[0]).TabID;
+                }
+            }
+
+            return searchTabId;
         }
     }
 }
