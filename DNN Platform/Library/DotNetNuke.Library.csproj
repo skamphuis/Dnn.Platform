@@ -278,6 +278,9 @@
     <Compile Include="Mvc\Containers\SkinHelpers.Content.cs" />
     <Compile Include="Mvc\Containers\SkinHelpers.Title.cs" />
     <Compile Include="Mvc\Controllers\DnnPageController.cs" />
+    <Compile Include="Mvc\Models\AccesDeniedException.cs" />
+    <Compile Include="Mvc\Models\ModuleMessageModel.cs" />
+    <Compile Include="Mvc\Models\NotFoundException.cs" />
     <Compile Include="Mvc\PermissionTriStateHelper.cs" />
     <Compile Include="Mvc\Security\Controllers\ModulePermissionsGridController.cs" />
     <Compile Include="Mvc\Security\Controllers\PermissionModel.cs" />

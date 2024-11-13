@@ -77,7 +77,14 @@ namespace DotNetNuke.Framework.Controllers
                 TabId = this.PortalSettings?.ActiveTab?.TabID,
                 Language = language,
             };
-            model.Skin = this.OnInit(model);
+            try
+            {
+                model.Skin = this.OnInit(model);
+            }
+            catch (AccesDeniedException ex)
+            {
+                return this.Redirect(ex.RedirectUrl);
+            }
 
             // DotNetNuke.Framework.JavaScriptLibraries.MvcJavaScript.Register(this.ControllerContext);
             model.ClientVariables = MvcClientAPI.GetClientVariableList();

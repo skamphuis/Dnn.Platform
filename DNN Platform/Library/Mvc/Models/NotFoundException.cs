@@ -1,0 +1,41 @@
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information
+
+namespace DotNetNuke.Web.Mvc.Skins
+{
+    using System;
+    using System.Runtime.Serialization;
+
+    [Serializable]
+    internal class NotFoundException : Exception
+    {
+        private string v;
+        private object value;
+
+        public NotFoundException()
+        {
+        }
+
+        public NotFoundException(string message)
+            : base(message)
+        {
+        }
+
+        public NotFoundException(string v, object value)
+        {
+            this.v = v;
+            this.value = value;
+        }
+
+        public NotFoundException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+
+        protected NotFoundException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+    }
+}

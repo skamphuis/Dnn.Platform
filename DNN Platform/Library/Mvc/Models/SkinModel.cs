@@ -13,6 +13,7 @@ namespace DotNetNuke.Web.Mvc.Skins
     using System.Web;
     using System.Web.Mvc;
 
+    using DotNetNuke.Abstractions;
     using DotNetNuke.Common;
     using DotNetNuke.Common.Utilities;
     using DotNetNuke.Entities.Controllers;
@@ -36,6 +37,7 @@ namespace DotNetNuke.Web.Mvc.Skins
     using DotNetNuke.Web.Client;
     using DotNetNuke.Web.Client.ClientResourceManagement;
     using DotNetNuke.Web.Mvc.Skins.Controllers;
+    using Microsoft.Extensions.DependencyInjection;
 
     public class SkinModel
     {
@@ -44,6 +46,8 @@ namespace DotNetNuke.Web.Mvc.Skins
         public SkinModel(DnnPageController page)
         {
             this.Page = page;
+            this.ModuleMessages = new List<ModuleMessageModel>();
+            this.NavigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
         }
 
         public DnnPageController Page { get; private set; }
@@ -109,6 +113,12 @@ namespace DotNetNuke.Web.Mvc.Skins
                 return string.Empty;
             }
         }
+
+        public string SkinError { get; set; }
+
+        public List<ModuleMessageModel> ModuleMessages { get; private set; }
+
+        protected INavigationManager NavigationManager { get; }
 
         public static SkinModel GetSkin(DnnPageController page)
         {
@@ -202,6 +212,16 @@ namespace DotNetNuke.Web.Mvc.Skins
             return skin;
         }
 
+        /// <summary>AddPageMessage adds a Page Message control to the Skin.</summary>
+        /// <param name="skin">The skin.</param>
+        /// <param name="heading">The Message Heading.</param>
+        /// <param name="message">The Message Text.</param>
+        /// <param name="moduleMessageType">The type of the message.</param>
+        public static void AddPageMessage(SkinModel skin, string heading, string message, ModuleMessage.ModuleMessageType moduleMessageType)
+        {
+            AddPageMessage(skin, heading, message, moduleMessageType, Null.NullString);
+        }
+
         public bool InjectModule(PaneModel pane, ModuleInfo module)
         {
             bool bSuccess = true;
@@ -271,13 +291,14 @@ namespace DotNetNuke.Web.Mvc.Skins
                     ClientResourceManager.RegisterScript(this.Page, "~/resources/shared/scripts/dnn.logViewer.js");
                 }
             }
-
+            */
             if (!TabPermissionController.CanAdminPage() && !success)
             {
                 // only display the warning to non-administrators (administrators will see the errors)
-                AddPageMessage(this, Localization.GetString("ModuleLoadWarning.Error"), string.Format(Localization.GetString("ModuleLoadWarning.Text"), this.PortalSettings.Email), ModuleMessage.ModuleMessageType.YellowWarning);
+                SkinModel.AddPageMessage(this, Localization.GetString("ModuleLoadWarning.Error"), string.Format(Localization.GetString("ModuleLoadWarning.Text"), this.PortalSettings.Email), ModuleMessage.ModuleMessageType.YellowWarning);
             }
 
+            /*
             this.InvokeSkinEvents(SkinEventType.OnSkinInit);
 
             if (HttpContext.Current != null && HttpContext.Current.Items.Contains(OnInitMessage))
@@ -371,6 +392,14 @@ namespace DotNetNuke.Web.Mvc.Skins
                 ctlSkin.OnInit(page); // new
                 ctlSkin.OnPreRender(page); // new
             }
+            catch (AccesDeniedException adExc)
+            {
+                throw adExc;
+            }
+            catch (NotFoundException nfexc)
+            {
+                throw nfexc;
+            }
             catch (Exception exc)
             {
                 // could not load user control
@@ -383,12 +412,33 @@ namespace DotNetNuke.Web.Mvc.Skins
                     skinError.Text = string.Format(Localization.GetString("SkinLoadError", Localization.GlobalResourceFile), skinPath, page.Server.HtmlEncode(exc.Message));
                     skinError.Visible = true;
                     */
+                    ctlSkin.SkinError = string.Format(Localization.GetString("SkinLoadError", Localization.GlobalResourceFile), skinPath, page.Server.HtmlEncode(exc.Message));
                 }
 
                 Exceptions.LogException(lex);
             }
 
             return ctlSkin;
+        }
+
+        private static void AddPageMessage(SkinModel skin, string heading, string message, ModuleMessage.ModuleMessageType moduleMessageType, string iconSrc)
+        {
+            if (!string.IsNullOrEmpty(message))
+            {
+                ModuleMessageModel moduleMessage = GetModuleMessage(heading, message, moduleMessageType, iconSrc);
+                skin.ModuleMessages.Insert(0, moduleMessage);
+            }
+        }
+
+        private static ModuleMessageModel GetModuleMessage(string heading, string message, ModuleMessage.ModuleMessageType moduleMessageType, string iconSrc)
+        {
+            return new ModuleMessageModel()
+            {
+                Heading = heading,
+                IconImage = iconSrc,
+                Text = message,
+                IconType = moduleMessageType,
+            };
         }
 
         private void ProcessPanes()
@@ -474,6 +524,7 @@ namespace DotNetNuke.Web.Mvc.Skins
 
                     if (TabVersionController.Instance.GetTabVersions(TabController.CurrentPage.TabID).All(tabVersion => tabVersion.Version != urlVersion))
                     {
+                        throw new NotFoundException("ErrorPage404", this.NavigationManager.NavigateURL(this.PortalSettings.ErrorPage404, string.Empty, "status=404"));
                         /*
                         this.Response.Redirect(this.NavigationManager.NavigateURL(this.PortalSettings.ErrorPage404, string.Empty, "status=404"));
                         */
@@ -581,6 +632,7 @@ namespace DotNetNuke.Web.Mvc.Skins
                 }
                 else
                 {
+                    throw new AccesDeniedException("AccesDenied", Globals.AccessDeniedURL(Localization.GetString("ModuleAccess.Error")));
                     /*
                     this.Response.Redirect(Globals.AccessDeniedURL(Localization.GetString("ModuleAccess.Error")), true);
                     */
@@ -629,11 +681,6 @@ namespace DotNetNuke.Web.Mvc.Skins
             }
 
             return pane;
-        }
-
-        private void AddPageMessage(SkinModel mvcSkin, string empty, string v, object redError)
-        {
-            throw new NotImplementedException();
         }
 
         private void HandleAccesDenied(bool v)
