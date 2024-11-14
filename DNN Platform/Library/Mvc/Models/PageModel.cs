@@ -47,5 +47,7 @@ namespace DotNetNuke.Framework.Models
         public bool IsEditMode { get; internal set; }
 
         public string FavIconLink { get; internal set; }
+
+        public string CanonicalLinkUrl { get; set; }
     }
 }

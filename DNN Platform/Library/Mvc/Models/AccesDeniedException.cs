@@ -8,16 +8,15 @@ namespace DotNetNuke.Web.Mvc.Skins
     using System.Runtime.Serialization;
 
     [Serializable]
-    public class AccesDeniedException : Exception
+    public class AccesDeniedException : MvcPageException
     {
         public AccesDeniedException()
         {
         }
 
         public AccesDeniedException(string message, string redirectUrl)
-            : base(message)
+            : base(message, redirectUrl)
         {
-            this.RedirectUrl = redirectUrl;
         }
 
         public AccesDeniedException(string message, Exception innerException)
@@ -29,7 +28,5 @@ namespace DotNetNuke.Web.Mvc.Skins
             : base(info, context)
         {
         }
-
-        public string RedirectUrl { get; private set; }
     }
 }

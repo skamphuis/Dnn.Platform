@@ -35,6 +35,10 @@
     {
         <meta id="MetaRobots" name="robots" Visible="@Model.MetaRobots" />
     }
+    @if (!string.IsNullOrEmpty(Model.CanonicalLinkUrl))
+    {
+        <link rel="canonical" href="@Model.CanonicalLinkUrl" />
+    }
     @if (!string.IsNullOrEmpty(Model.FavIconLink))
     {
         @Html.Raw(Model.FavIconLink)
@@ -57,6 +61,43 @@
     @if (!string.IsNullOrEmpty(Model.Skin.ControlPanelRazor))
     {
         @Html.Action("Index", Model.Skin.ControlPanelRazor, Model);
+    }
+
+    @if (!string.IsNullOrEmpty(Model.Skin.SkinError))
+    {
+        <div class="NormalRed">Model.Skin.SkinError</div>
+    }
+
+    @if (Model.Skin.PageMessages.Any() || Model.Skin.ModuleMessages.Any())
+    {
+        <div id="dnnSkinMessage">
+            @foreach (var msg in Model.Skin.PageMessages)
+            {
+
+                <div class="dnnModuleMessage">
+                    <div CssClass="dnnModMessageHeading">@msg.Heading</div>
+                    <div>@msg.Text</div>
+                </div>
+
+            }
+            @foreach (var msg in Model.Skin.ModuleMessages)
+            {
+                <div>
+                    <div class="dnnModuleMessage">
+                        <div CssClass="dnnModMessageHeading">@msg.Heading</div>
+                        <div>@msg.Text</div>
+                    </div>
+
+                </div>
+            }
+        </div>
+        <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                var $body = window.opera ? (document.compatMode == "CSS1Compat" ? $('html') : $('body')) : $('html,body');
+                var scrollTop = $('#dnnSkinMessage').offset().top - parseInt($(document.body).css("margin-top"));
+                $body.animate({ scrollTop: scrollTop }, 'fast');
+            });
+        </script>
     }
     @RenderBody()
     <script>

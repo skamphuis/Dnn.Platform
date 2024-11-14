@@ -13,10 +13,12 @@ namespace DotNetNuke.Framework.Controllers
     using System.Text.RegularExpressions;
     using System.Web;
     using System.Web.Helpers;
+    using System.Web.Http.Results;
     using System.Web.Mvc;
 
     using ClientDependency.Core.Mvc;
     using Dnn.EditBar.UI.Mvc;
+    using DotNetNuke.Abstractions;
     using DotNetNuke.Application;
     using DotNetNuke.Common.Utilities;
     using DotNetNuke.Entities.Host;
@@ -35,12 +37,14 @@ namespace DotNetNuke.Framework.Controllers
     using DotNetNuke.UI.Internals;
     using DotNetNuke.UI.Modules;
     using DotNetNuke.UI.Skins;
+    using DotNetNuke.UI.Skins.Controls;
     using DotNetNuke.UI.Utilities;
     using DotNetNuke.Web.Client;
     using DotNetNuke.Web.Client.ClientResourceManagement;
     using DotNetNuke.Web.Mvc.Framework.ActionFilters;
     using DotNetNuke.Web.Mvc.Skins;
     using DotNetNuke.Web.Mvc.Skins.Controllers;
+    using Microsoft.Extensions.DependencyInjection;
 
     using Globals = DotNetNuke.Common.Globals;
 
@@ -49,6 +53,13 @@ namespace DotNetNuke.Framework.Controllers
         private static readonly Regex HeaderTextRegex = new Regex(
             "<meta([^>])+name=('|\")robots('|\")",
             RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
+
+        public DefaultController()
+        {
+            this.NavigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
+        }
+
+        protected INavigationManager NavigationManager { get; }
 
         public ActionResult Page(int tabid, string language)
         {
@@ -81,9 +92,16 @@ namespace DotNetNuke.Framework.Controllers
             {
                 model.Skin = this.OnInit(model);
             }
-            catch (AccesDeniedException ex)
+            catch (MvcPageException ex)
             {
-                return this.Redirect(ex.RedirectUrl);
+                if (string.IsNullOrEmpty(ex.RedirectUrl))
+                {
+                    return this.HttpNotFound(ex.Message);
+                }
+                else
+                {
+                    return this.Redirect(ex.RedirectUrl);
+                }
             }
 
             // DotNetNuke.Framework.JavaScriptLibraries.MvcJavaScript.Register(this.ControllerContext);
@@ -140,7 +158,6 @@ namespace DotNetNuke.Framework.Controllers
             this.SetSkinDoctype();
             */
 
-            /*
             // Manage disabled pages
             if (this.PortalSettings.ActiveTab.DisableLink)
             {
@@ -149,7 +166,7 @@ namespace DotNetNuke.Framework.Controllers
                     var heading = Localization.GetString("PageDisabled.Header");
                     var message = Localization.GetString("PageDisabled.Text");
 
-                    UI.Skins.Skin.AddPageMessage(
+                    SkinModel.AddPageMessage(
                         ctlSkin,
                         heading,
                         message,
@@ -159,11 +176,14 @@ namespace DotNetNuke.Framework.Controllers
                 {
                     if (this.PortalSettings.HomeTabId > 0)
                     {
-                        this.Response.Redirect(this.NavigationManager.NavigateURL(this.PortalSettings.HomeTabId), true);
+                        throw new DisabledPageException("DisableLink", this.NavigationManager.NavigateURL(this.PortalSettings.HomeTabId));
+
+                        // this.Response.Redirect(this.NavigationManager.NavigateURL(this.PortalSettings.HomeTabId), true);
                     }
                     else
                     {
-                        this.Response.Redirect(Globals.GetPortalDomainName(this.PortalSettings.PortalAlias.HTTPAlias, this.Request, true), true);
+                        // this.Response.Redirect(Globals.GetPortalDomainName(this.PortalSettings.PortalAlias.HTTPAlias, this.Request, true), true);
+                        throw new DisabledPageException("DisableLink", Globals.GetPortalDomainName(this.PortalSettings.PortalAlias.HTTPAlias, System.Web.HttpContext.Current.Request, true));
                     }
                 }
             }
@@ -192,19 +212,18 @@ namespace DotNetNuke.Framework.Controllers
                     }
                 }
 
-                if (primaryHttpAlias != null && string.IsNullOrEmpty(this.CanonicalLinkUrl))
+                if (primaryHttpAlias != null && string.IsNullOrEmpty(page.CanonicalLinkUrl))
                 {
                     // a primary http alias was identified
-                    var originalurl = this.Context.Items["UrlRewrite:OriginalUrl"].ToString();
-                    this.CanonicalLinkUrl = originalurl.Replace(this.PortalSettings.PortalAlias.HTTPAlias, primaryHttpAlias);
+                    var originalurl = this.HttpContext.Items["UrlRewrite:OriginalUrl"].ToString();
+                    page.CanonicalLinkUrl = originalurl.Replace(this.PortalSettings.PortalAlias.HTTPAlias, primaryHttpAlias);
 
-                    if (UrlUtils.IsSecureConnectionOrSslOffload(this.Request))
+                    if (UrlUtils.IsSecureConnectionOrSslOffload(System.Web.HttpContext.Current.Request))
                     {
-                        this.CanonicalLinkUrl = this.CanonicalLinkUrl.Replace("http://", "https://");
+                        page.CanonicalLinkUrl = page.CanonicalLinkUrl.Replace("http://", "https://");
                     }
                 }
             }
-            */
 
             // add CSS links
             MvcClientResourceManager.RegisterDefaultStylesheet(this.ControllerContext, string.Concat(Globals.ApplicationPath, "/Resources/Shared/stylesheets/dnndefault/7.0.0/default.css"));
@@ -269,7 +288,7 @@ namespace DotNetNuke.Framework.Controllers
 
             // Configure the ActiveTab with Skin/Container information
             PortalSettingsController.Instance().ConfigureActiveTab(this.PortalSettings);
-            /*
+
             // redirect to a specific tab based on name
             if (!string.IsNullOrEmpty(this.Request.QueryString["tabname"]))
             {
@@ -291,15 +310,17 @@ namespace DotNetNuke.Framework.Controllers
                         }
                     }
 
-                    this.Response.Redirect(this.NavigationManager.NavigateURL(tab.TabID, Null.NullString, parameters.ToArray()), true);
+                    // this.Response.Redirect(this.NavigationManager.NavigateURL(tab.TabID, Null.NullString, parameters.ToArray()), true);
+                    throw new MvcPageException("redirect to a specific tab based on name", this.NavigationManager.NavigateURL(tab.TabID, Null.NullString, parameters.ToArray()));
                 }
                 else
                 {
                     // 404 Error - Redirect to ErrorPage
-                    Exceptions.ProcessHttpException(this.Request);
+                    // Exceptions.ProcessHttpException(this.Request);
+                    throw new NotFoundException("redirect to a specific tab based on name - tab not found");
                 }
             }
-            */
+
             string cacheability = this.Request.IsAuthenticated ? Host.AuthenticatedCacheability : Host.UnauthenticatedCacheability;
 
             switch (cacheability)

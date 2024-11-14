@@ -8,28 +8,28 @@ namespace DotNetNuke.Web.Mvc.Skins
     using System.Runtime.Serialization;
 
     [Serializable]
-    internal class NotFoundException : MvcPageException
+    internal class DisabledPageException : MvcPageException
     {
-        public NotFoundException()
+        public DisabledPageException()
         {
         }
 
-        public NotFoundException(string message)
+        public DisabledPageException(string message)
             : base(message)
         {
         }
 
-        public NotFoundException(string message, string redirectUrl)
+        public DisabledPageException(string message, string redirectUrl)
             : base(message, redirectUrl)
         {
         }
 
-        public NotFoundException(string message, Exception innerException)
+        public DisabledPageException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
-        protected NotFoundException(SerializationInfo info, StreamingContext context)
+        protected DisabledPageException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

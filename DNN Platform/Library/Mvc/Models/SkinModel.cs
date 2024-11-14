@@ -46,6 +46,7 @@ namespace DotNetNuke.Web.Mvc.Skins
         public SkinModel(DnnPageController page)
         {
             this.Page = page;
+            this.PageMessages = new List<ModuleMessageModel>();
             this.ModuleMessages = new List<ModuleMessageModel>();
             this.NavigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
         }
@@ -115,6 +116,8 @@ namespace DotNetNuke.Web.Mvc.Skins
         }
 
         public string SkinError { get; set; }
+
+        public List<ModuleMessageModel> PageMessages { get; private set; }
 
         public List<ModuleMessageModel> ModuleMessages { get; private set; }
 
@@ -392,13 +395,9 @@ namespace DotNetNuke.Web.Mvc.Skins
                 ctlSkin.OnInit(page); // new
                 ctlSkin.OnPreRender(page); // new
             }
-            catch (AccesDeniedException adExc)
+            catch (MvcPageException mvcExc)
             {
-                throw adExc;
-            }
-            catch (NotFoundException nfexc)
-            {
-                throw nfexc;
+                throw mvcExc;
             }
             catch (Exception exc)
             {
@@ -570,6 +569,7 @@ namespace DotNetNuke.Web.Mvc.Skins
                     redirectUrl = new LanguageTokenReplace { Language = currentLocale.Code }.ReplaceEnvironmentTokens("[URL]");
                 }
 
+                throw new AccesDeniedException("TabAccess.Error", redirectUrl);
                 /*
                 this.Response.Redirect(redirectUrl, true);
                 */
