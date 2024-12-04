@@ -449,7 +449,7 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
                 FilePath = filePath,
                 Priority = priority,
 
-                // ForceProvider = provider,
+                ForceProvider = provider,
                 Group = Constants.DefaultGroup,
                 Name = name,
                 Version = version,
