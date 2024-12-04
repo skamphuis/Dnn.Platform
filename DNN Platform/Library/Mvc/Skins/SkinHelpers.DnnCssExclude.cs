@@ -13,7 +13,6 @@ namespace DotNetNuke.Web.Mvc.Skins
         {
             var cssExclude = new TagBuilder("dnn:DnnCssExclude");
             cssExclude.Attributes.Add("ID", "ctlExclude");
-            cssExclude.Attributes.Add("runat", "server");
             cssExclude.Attributes.Add("Name", name);
 
             return new MvcHtmlString(cssExclude.ToString());

@@ -9,6 +9,7 @@ namespace DotNetNuke.Framework.Controllers
     using System.Globalization;
     using System.Linq;
     using System.Net.NetworkInformation;
+    using System.Security.Policy;
     using System.Web;
     using System.Web.Mvc;
 

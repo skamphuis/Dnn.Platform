@@ -25,6 +25,7 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Services.Localization;
     using DotNetNuke.Web.Client.ClientResourceManagement;
     using DotNetNuke.Web.Mvc;
+    using DotNetNuke.Web.Mvc.Csp;
     using DotNetNuke.Web.Mvc.Page;
     using DotNetNuke.Website.Controllers;
     using DotNetNuke.Website.Models;
@@ -32,16 +33,20 @@ namespace DotNetNuke.Modules.Html.Mvc
 
     using static DotNetNuke.Modules.Html.Mvc.DNN_HTMLController;
 
-    public class HTMLEditHTMLViewController : ModuleSettingsController
+    public class HTMLEditHTMLViewController : ModuleControllerBase
     {
         private readonly INavigationManager navigationManager;
         private readonly HtmlTextController htmlTextController;
         private readonly WorkflowStateController workflowStateController = new WorkflowStateController();
+        private readonly IContentSecurityPolicy contentSecurityPolicy;
 
-        public HTMLEditHTMLViewController()
+        public HTMLEditHTMLViewController(IContentSecurityPolicy csp)
         {
             this.navigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
             this.htmlTextController = new HtmlTextController(this.navigationManager);
+
+            // this.contentSecurityPolicy = Globals.DependencyProvider.GetRequiredService<IContentSecurityPolicy>();
+            this.contentSecurityPolicy = csp;
         }
 
         [HttpGet]
@@ -105,6 +110,13 @@ namespace DotNetNuke.Modules.Html.Mvc
             MvcClientResourceManager.RegisterStyleSheet(this.ControllerContext, "~/Portals/_default/Skins/_default/WebControlSkin/Default/GridView.default.css");
             MvcClientResourceManager.RegisterStyleSheet(this.ControllerContext, "~/DesktopModules/HTML/edit.css");
             MvcClientResourceManager.RegisterScript(this.ControllerContext, "~/DesktopModules/HTML/edit.js");
+
+            this.contentSecurityPolicy.AddStyleSource(CspSourceType.Inline);
+            this.contentSecurityPolicy.AddScriptSource(CspSourceType.Self);
+            this.contentSecurityPolicy.AddScriptSource(CspSourceType.Inline);
+            this.contentSecurityPolicy.RemoveScriptSources(CspSourceType.Nonce);
+            this.contentSecurityPolicy.RemoveScriptSources(CspSourceType.StrictDynamic);
+            this.contentSecurityPolicy.AddImgSource(CspSourceType.Scheme, "data:");
             return this.View(module, model);
         }
 

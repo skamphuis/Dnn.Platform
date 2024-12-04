@@ -31,8 +31,8 @@ namespace DotNetNuke.Mvc
         {
             const string scriptKey = "initTriState";
             MvcJavaScript.RequestRegistration(CommonJs.jQuery);
-            MvcClientResourceManager.RegisterScript(helper.ViewContext, "dnn.permissiontristate.js");
-            MvcClientAPI.RegisterStartupScript(scriptKey, "<script type='text/javascript'>" + GetInitScript() + "</script>");
+            MvcClientResourceManager.RegisterScript(helper.ViewContext, "/js/dnn.permissiontristate.js");
+            MvcClientAPI.RegisterStartupScript(scriptKey, GetInitScript());
 
             var grantImagePath = IconController.IconURL("Grant");
             var denyImagePath = IconController.IconURL("Deny");

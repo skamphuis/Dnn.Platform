@@ -26,6 +26,7 @@ namespace DotNetNuke.Website.Controllers
     using DotNetNuke.UI.Skins;
     using DotNetNuke.Web.Client.ClientResourceManagement;
     using DotNetNuke.Web.Mvc;
+    using DotNetNuke.Web.Mvc.Csp;
     using DotNetNuke.Website.Models;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -33,6 +34,7 @@ namespace DotNetNuke.Website.Controllers
     {
         private readonly INavigationManager navigationManager;
         private readonly ModuleController moduleController;
+
         private int moduleId = -1;
         private ModuleInfo module;
 
@@ -60,30 +62,6 @@ namespace DotNetNuke.Website.Controllers
         private ModuleInfo Module
         {
             get { return this.module ?? (this.module = ModuleController.Instance.GetModule(this.moduleId, this.TabId, false)); }
-        }
-
-        [HttpGet]
-        public ActionResult LoadDefaultSettings(int moduleId)
-        {
-            this.Initialize();
-            var model = new ModuleSettingsModel();
-            model.TabId = this.TabId;
-            model.ReturnUrl = this.Request.QueryString["ReturnURL"];
-
-            ModuleControlInfo moduleControlInfo = ModuleControlController.GetModuleControlByControlKey("Settings", this.Module.ModuleDefID);
-            if (moduleControlInfo != null)
-            {
-                model.ModuleControllerName = this.Module.DesktopModule.ModuleName;
-                model.ModuleActionName = "LoadSettings";
-                model.ModuleLocalResourceFile = Path.Combine(Path.GetDirectoryName(moduleControlInfo.ControlSrc), Localization.LocalResourceDirectory + "/" + Path.GetFileNameWithoutExtension(moduleControlInfo.ControlSrc));
-            }
-
-            this.BindData(this.Module, model);
-            MvcJavaScript.RequestRegistration(CommonJs.DnnPlugins);
-            MvcClientResourceManager.RegisterScript(this.ControllerContext, "~/Resources/Shared/scripts/jquery/jquery.form.min.js");
-            MvcClientResourceManager.RegisterScript(this.ControllerContext, "~/admin/Modules/module.js");
-
-            return this.View(model);
         }
 
         [HttpPost]

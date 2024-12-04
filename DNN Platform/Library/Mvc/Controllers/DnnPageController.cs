@@ -24,7 +24,7 @@ namespace DotNetNuke.Web.Mvc.Skins.Controllers
     using DotNetNuke.Web.Mvc.Helpers;
     */
 
-    public abstract class DnnPageController : Controller // IDnnController
+    public abstract class DnnPageController : Controller, IMvcController
     {
         /// <summary>Initializes a new instance of the <see cref="DnnPageController"/> class.</summary>
         protected DnnPageController()

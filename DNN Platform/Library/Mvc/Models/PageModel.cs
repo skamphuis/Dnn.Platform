@@ -5,6 +5,7 @@ namespace DotNetNuke.Framework.Models
 {
     using System.Collections.Generic;
 
+    using DotNetNuke.Web.Mvc.Csp;
     using DotNetNuke.Web.Mvc.Skins;
 
     public class PageModel
@@ -49,5 +50,7 @@ namespace DotNetNuke.Framework.Models
         public string FavIconLink { get; internal set; }
 
         public string CanonicalLinkUrl { get; set; }
+
+        public IContentSecurityPolicy ContentSecurityPolicy { get; internal set; }
     }
 }

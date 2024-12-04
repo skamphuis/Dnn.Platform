@@ -80,7 +80,7 @@ namespace DotNetNuke.Framework.JavaScriptLibraries
             switch (jsname)
             {
                 case CommonJs.jQuery:
-                    RequestRegistration(CommonJs.jQueryMigrate);
+                    // RequestRegistration(CommonJs.jQueryMigrate);
                     break;
             }
 
@@ -138,7 +138,10 @@ namespace DotNetNuke.Framework.JavaScriptLibraries
             IEnumerable<JavaScriptLibrary> finalScripts = ResolveVersionConflicts(scripts);
             foreach (JavaScriptLibrary jsl in finalScripts)
             {
-                RegisterScript(page, jsl);
+                if (jsl.LibraryName != "jQuery-Migrate")
+                {
+                    RegisterScript(page, jsl);
+                }
             }
         }
 
@@ -177,7 +180,7 @@ namespace DotNetNuke.Framework.JavaScriptLibraries
                         break;
                     }
 
-                    MvcClientResourceManager.RegisterScript(page, ClientAPI.ScriptPath + "MicrosoftAjax.js", 10);
+                    // MvcClientResourceManager.RegisterScript(page, ClientAPI.ScriptPath + "MicrosoftAjax.js", 10);
                     MvcClientResourceManager.RegisterScript(page, ClientAPI.ScriptPath + "mvc.js", 11);
                     MvcClientResourceManager.RegisterScript(page, ClientAPI.ScriptPath + "dnn.js", 12);
                     HttpContextSource.Current.Items.Add(LegacyPrefix + "dnn.js", true);
@@ -508,6 +511,7 @@ namespace DotNetNuke.Framework.JavaScriptLibraries
                                 "DnnPageHeaderProvider");
                         }
 
+                        /*
                         if (GetHighestVersionLibrary(CommonJs.jQueryMigrate) == null)
                         {
                             MvcClientResourceManager.RegisterScript(
@@ -516,7 +520,7 @@ namespace DotNetNuke.Framework.JavaScriptLibraries
                                 FileOrder.Js.jQueryMigrate,
                                 "DnnPageHeaderProvider");
                         }
-
+                        */
                         break;
                     case CommonJs.jQueryUI:
                         // register dependency
@@ -529,6 +533,7 @@ namespace DotNetNuke.Framework.JavaScriptLibraries
                                 "DnnPageHeaderProvider");
                         }
 
+                        /*
                         if (GetHighestVersionLibrary(CommonJs.jQueryMigrate) == null)
                         {
                             MvcClientResourceManager.RegisterScript(
@@ -537,6 +542,7 @@ namespace DotNetNuke.Framework.JavaScriptLibraries
                                 FileOrder.Js.jQueryMigrate,
                                 "DnnPageHeaderProvider");
                         }
+                        */
 
                         // actual jqueryui
                         if (GetHighestVersionLibrary(CommonJs.jQueryUI) == null)

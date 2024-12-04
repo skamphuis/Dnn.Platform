@@ -111,13 +111,13 @@
     @* Add User Section *@
     <div class="dnnFormItem">
         <label>@Localization.GetString("DisplayName")</label>
-        <input type="text" id="txtUser" class="userSearchInput" style="height:34px;" />
+        <input type="text" id="txtUser" class="userSearchInput"  />
         <input type="hidden" id="hiddenUserIds" />
         <a href="#" class="dnnSecondaryAction addUserBtn">@Localization.GetString("Add")</a>
     </div>
 </div>
 
-@section Scripts {
+@*@section Scripts {
     <script>
         $(function() {
             var permissionsGrid = new PermissionsGrid({
@@ -128,4 +128,4 @@
             });
         });
     </script>
-} 
+}*@ 

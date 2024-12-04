@@ -50,5 +50,10 @@ namespace DotNetNuke.Web.Mvc
                 throw new Exception($"{ex.Message} - {MvcUtils.GetControlControllerName(module.ModuleControl.ControlSrc)} - Invoke", ex);
             }
         }
+
+        public static IHtmlString CspNonce(this HtmlHelper htmlHelper)
+        {
+            return new MvcHtmlString(htmlHelper.ViewContext.HttpContext.Items["CSP-NONCE"].ToString());
+        }
     }
 }

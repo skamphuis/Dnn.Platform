@@ -21,17 +21,20 @@ namespace DotNetNuke.Website.Controllers
     using DotNetNuke.UI.Skins;
     using DotNetNuke.Web.Client.ClientResourceManagement;
     using DotNetNuke.Web.Mvc;
+    using DotNetNuke.Web.Mvc.Csp;
     using DotNetNuke.Website.Models;
 
     public class ModuleSettingsViewController : ModuleControllerBase
     {
         private readonly ModuleController moduleController;
+        private readonly IContentSecurityPolicy contentSecurityPolicy;
         private int moduleId = -1;
         private ModuleInfo module;
 
-        public ModuleSettingsViewController()
+        public ModuleSettingsViewController(IContentSecurityPolicy csp)
         {
             this.moduleController = new ModuleController();
+            this.contentSecurityPolicy = csp;
         }
 
         public int TabId
@@ -75,7 +78,8 @@ namespace DotNetNuke.Website.Controllers
             MvcJavaScript.RequestRegistration(CommonJs.DnnPlugins);
             MvcClientResourceManager.RegisterScript(this.ControllerContext, "~/Resources/Shared/scripts/jquery/jquery.form.min.js");
             MvcClientResourceManager.RegisterScript(this.ControllerContext, "~/admin/Modules/module.js");
-
+            this.contentSecurityPolicy.AddImgSource(CspSourceType.Scheme, "data:");
+            this.contentSecurityPolicy.AddStyleSource(CspSourceType.Inline);
             return this.View(model);
         }
 

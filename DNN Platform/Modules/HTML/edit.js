@@ -6,7 +6,12 @@ $(function () {
     var urlpars = 'tabid=' + tabId + '&PortalID=' + portalId + '&mid=' + moduleId;
 
     var editorConfigeditortxtContent = {
-        allowedContent: false, autoGrow_bottomSpace: 0, autoGrow_maxHeight: 0,
+        //allowedContent: false,
+        //allowedContent: true,
+        justifyClasses: ['text-left', 'text-center', 'text-right', 'text-justify'],
+        allowedContent: 'h1 h2 strong u sub sup em ol label hr blockquote table theader th tbody tr td; a[!href](*); img[!src,alt,width,height](*); div(*);ul(*); li(*);span(*);p(*)',
+        autoGrow_bottomSpace: 0,
+        autoGrow_maxHeight: 0,
         autoGrow_minHeight: 200, autoGrow_onStartup: false, autoParagraph: true,
         autosave_delay: 25, autoUpdateElement: true, baseFloatZIndex: 10000,
         basicEntities: true,

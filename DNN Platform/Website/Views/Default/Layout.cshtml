@@ -2,8 +2,7 @@
 @using ClientDependency.Core.Mvc
 @model DotNetNuke.Framework.Models.PageModel
 @{
-
-    var SkinPath = Path.GetDirectoryName(Model.Skin.SkinSrc);
+    var SkinPath = Path.GetDirectoryName(Model.Skin.SkinSrc).Replace("\\","/");
     DotNetNuke.Framework.JavaScriptLibraries.MvcJavaScript.Register(this.ViewContext);
 }
 <!DOCTYPE html>
@@ -73,12 +72,10 @@
         <div id="dnnSkinMessage">
             @foreach (var msg in Model.Skin.PageMessages)
             {
-
                 <div class="dnnModuleMessage">
                     <div CssClass="dnnModMessageHeading">@msg.Heading</div>
                     <div>@msg.Text</div>
                 </div>
-
             }
             @foreach (var msg in Model.Skin.ModuleMessages)
             {
@@ -87,7 +84,6 @@
                         <div CssClass="dnnModMessageHeading">@msg.Heading</div>
                         <div>@msg.Text</div>
                     </div>
-
                 </div>
             }
         </div>
@@ -100,19 +96,29 @@
         </script>
     }
     @RenderBody()
-    <script>
-        var dnn = dnn || {};
-        dnn.panes = [];
-        dnn.panesClientIds = [];
-        $(".dnnPane").each(function () {
-            //$(this).removeClass('DNNEmptyPane').addClass('dnnDropEmptyPanes');
-            dnn.panes.push($(this).attr("data-name"));
-            dnn.panesClientIds.push($(this).attr("id"));
-        });
-	@foreach(var s in Model.StartupScripts)
-	{
-		@Html.Raw(s.Value);
-	}
-    </script>
+    @if (Model.IsEditMode)
+    {
+        <script nonce="@Model.ContentSecurityPolicy.Nonce">
+            var dnn = dnn || {};
+            dnn.panes = [];
+            dnn.panesClientIds = [];
+            $(".dnnPane").each(function () {
+                //$(this).removeClass('DNNEmptyPane').addClass('dnnDropEmptyPanes');
+                dnn.panes.push($(this).attr("data-name"));
+                dnn.panesClientIds.push($(this).attr("id"));
+            });
+        </script>
+    }
+    @if (Model.StartupScripts.Any())
+    {
+        <script nonce="@Model.ContentSecurityPolicy.Nonce">
+        // startup scripts
+        @foreach (var s in Model.StartupScripts)
+        {
+            <text>// @s.Key </text>
+	        @Html.Raw(s.Value);
+        }
+        </script>
+    }
 </body>
 </html>

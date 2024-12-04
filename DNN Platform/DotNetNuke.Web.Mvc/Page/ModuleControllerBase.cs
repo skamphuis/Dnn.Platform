@@ -24,8 +24,9 @@ namespace DotNetNuke.Web.Mvc
     using DotNetNuke.UI.Modules;
     using DotNetNuke.Web.Mvc.Common;
     using DotNetNuke.Web.Mvc.Routing;
+    using DotNetNuke.Web.Mvc.Skins.Controllers;
 
-    public class ModuleControllerBase : Controller
+    public class ModuleControllerBase : Controller, IMvcController
     {
         private readonly Lazy<ModuleInfo> activeModule;
         /*

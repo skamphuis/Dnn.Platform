@@ -1,10 +1,11 @@
 @model DotNetNuke.Website.Controllers.ModuleActionsModel
 
+@using DotNetNuke.Web.Mvc
 @using DotNetNuke.UI.Modules
 @using DotNetNuke.Services.Localization
 
 @{
-    
+
 }
 
 <a href="#" id="moduleActions-@(Model.ModuleContext.ModuleID)-Menu" class="dnnModuleActions-actionButton" aria-label="Actions"></a>
@@ -25,7 +26,7 @@
     </div>
 }
 
-<script type="text/javascript">
+<script type="text/javascript" nonce="@Html.CspNonce()">
     (function ($) {
         var moduleId = @Model.ModuleContext.ModuleID;
         var displayQuickSettings = @Json.Encode(Model.DisplayQuickSettings);
@@ -145,7 +146,7 @@
 
                             var token = '@Html.AntiForgeryToken()';
                             token = $(token).val();
-                             
+
                             $.post('@Url.Action("Delete", "ModuleActions")', {
                                 moduleId: moduleId,
                                 tabId: @Model.ModuleContext.TabID,

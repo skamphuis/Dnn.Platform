@@ -41,6 +41,7 @@ namespace DotNetNuke.Framework.Controllers
     using DotNetNuke.UI.Utilities;
     using DotNetNuke.Web.Client;
     using DotNetNuke.Web.Client.ClientResourceManagement;
+    using DotNetNuke.Web.Mvc.Csp;
     using DotNetNuke.Web.Mvc.Framework.ActionFilters;
     using DotNetNuke.Web.Mvc.Skins;
     using DotNetNuke.Web.Mvc.Skins.Controllers;
@@ -54,27 +55,67 @@ namespace DotNetNuke.Framework.Controllers
             "<meta([^>])+name=('|\")robots('|\")",
             RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
 
-        public DefaultController()
+        public DefaultController(IContentSecurityPolicy csp)
         {
             this.NavigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
+
+            // this.ContentSecurityPolicy = Globals.DependencyProvider.GetRequiredService<IContentSecurityPolicy>();
+            this.ContentSecurityPolicy = csp;
         }
 
         protected INavigationManager NavigationManager { get; }
 
+        protected IContentSecurityPolicy ContentSecurityPolicy { get; }
+
         public ActionResult Page(int tabid, string language)
         {
-            var antiForgery = string.Empty;
+            this.HttpContext.Items.Add("CSP-NONCE", this.ContentSecurityPolicy.Nonce);
+
+            this.ContentSecurityPolicy.AddDefaultSource(CspSourceType.Self);
+            this.ContentSecurityPolicy.AddImgSource(CspSourceType.Self);
+            this.ContentSecurityPolicy.AddFontSource(CspSourceType.Self);
+            this.ContentSecurityPolicy.AddStyleSource(CspSourceType.Self);
+            this.ContentSecurityPolicy.AddObjectSource(CspSourceType.None);
+            this.ContentSecurityPolicy.AddBaseUriSource(CspSourceType.None);
+            this.ContentSecurityPolicy.AddScriptSource(CspSourceType.Nonce);
+
+            // this.ContentSecurityPolicy.AddScriptSource(CspSourceType.Scheme, "http:");
+            // this.ContentSecurityPolicy.AddScriptSource(CspSourceType.Scheme, "https:");
+
+            // JavaScriptLibraries.JavaScript.RequestRegistration(CommonJs.jQuery);
+            // ServicesFrameworkInternal.Instance.RegisterAjaxScript(this.ControllerContext);
+            var dnncoreFilePath = this.HttpContext.IsDebuggingEnabled
+                   ? "~/js/Debug/dnncore.js"
+                   : "~/js/dnncore.js";
+
+            var htmlAttributes = new Dictionary<string, string>
+            {
+                { "defer", "defer" },
+            };
+
+            MvcClientResourceManager.RegisterScript(this.ControllerContext, dnncoreFilePath, htmlAttributes: htmlAttributes);
+
+            var user = this.PortalSettings.UserInfo;
+
+            if (PortalSettings.Current.UserId > 0)
+            {
+                MvcContentEditorManager.CreateManager(this);
+            }
+
             ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
+
+            if (ServicesFrameworkInternal.Instance.IsAjaxScriptSupportRequired)
+            {
+                ServicesFrameworkInternal.Instance.RegisterAjaxScript(this.ControllerContext);
+            }
+
+            var antiForgery = string.Empty;
+
+            // ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
             if (ServicesFrameworkInternal.Instance.IsAjaxScriptSupportRequired)
             {
                 antiForgery = AntiForgery.GetHtml().ToHtmlString();
             }
-
-            JavaScriptLibraries.JavaScript.RequestRegistration(CommonJs.jQuery);
-            ServicesFrameworkInternal.Instance.RegisterAjaxScript(this.ControllerContext);
-            var user = this.PortalSettings.UserInfo;
-
-            MvcContentEditorManager.CreateManager(this);
 
             var renderer = this.ControllerContext.GetLoader();
 
@@ -87,6 +128,7 @@ namespace DotNetNuke.Framework.Controllers
                 PortalId = this.PortalSettings?.PortalId,
                 TabId = this.PortalSettings?.ActiveTab?.TabID,
                 Language = language,
+                ContentSecurityPolicy = this.ContentSecurityPolicy,
             };
             try
             {
@@ -108,6 +150,7 @@ namespace DotNetNuke.Framework.Controllers
             model.ClientVariables = MvcClientAPI.GetClientVariableList();
             model.StartupScripts = MvcClientAPI.GetClientStartupScriptList();
 
+            // this.Response.AddHeader("Content-Security-Policy", $"default-src 'self';base-uri 'self';form-action 'self';object-src 'none'; img-src *; style-src 'self' 'unsafe-inline';font-src *; script-src * 'unsafe-inline';");
             return this.View(model.Skin.RazorFile, "Layout", model);
         }
 

@@ -25,6 +25,7 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Services.Localization;
     using DotNetNuke.Web.Client.ClientResourceManagement;
     using DotNetNuke.Web.Mvc;
+    using DotNetNuke.Web.Mvc.Csp;
     using DotNetNuke.Web.Mvc.Page;
     using DotNetNuke.Website.Controllers;
     using DotNetNuke.Website.Models;
@@ -38,7 +39,7 @@ namespace DotNetNuke.Modules.Html.Mvc
         private readonly WorkflowStateController workflowStateController = new WorkflowStateController();
         private readonly HtmlModuleSettingsRepository settingsRepository;
 
-        public DNN_HTMLController()
+        public DNN_HTMLController(IContentSecurityPolicy csp)
         {
             this.navigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
             this.htmlTextController = new HtmlTextController(this.navigationManager);

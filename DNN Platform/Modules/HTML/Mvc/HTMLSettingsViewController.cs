@@ -30,7 +30,7 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Website.Models;
     using Microsoft.Extensions.DependencyInjection;
 
-    public class HTMLSettingsViewController : ModuleSettingsController
+    public class HTMLSettingsViewController : ModuleControllerBase
     {
         private readonly INavigationManager navigationManager;
         private readonly HtmlTextController htmlTextController;

@@ -315,8 +315,10 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
                 }
             }
 
+            // include.HtmlAttributes["defer"] = "defer";
+            include.HtmlAttributes["nonce"] = HttpContext.Current.Items["CSP-NONCE"].ToString();
             var loader = page.GetLoader();
-            loader.RegisterDependency(include);
+            loader.RegisterDependency(include, include.HtmlAttributes);
 
             // page.FindControl("ClientResourceIncludes")?.Controls.Add(include);
         }
@@ -449,7 +451,7 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
                 FilePath = filePath,
                 Priority = priority,
 
-                ForceProvider = provider,
+                // ForceProvider = provider,
                 Group = Constants.DefaultGroup,
                 Name = name,
                 Version = version,

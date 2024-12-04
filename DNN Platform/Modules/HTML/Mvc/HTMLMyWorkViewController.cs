@@ -30,7 +30,7 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Website.Models;
     using Microsoft.Extensions.DependencyInjection;
 
-    public class HTMLMyWorkViewController : ModuleSettingsController
+    public class HTMLMyWorkViewController : ModuleControllerBase
     {
         private readonly INavigationManager navigationManager;
 

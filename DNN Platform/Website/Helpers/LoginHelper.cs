@@ -1,29 +1,30 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information
 
-namespace DotNetNuke.Web.Mvc.Skins
+namespace DotNetNuke.Web.Mvc.Helpers
 {
     using System;
-    using System.Runtime.CompilerServices;
     using System.Web;
     using System.Web.Mvc;
-
-    using DotNetNuke.Abstractions;
     using DotNetNuke.Common;
     using DotNetNuke.Common.Utilities;
-    using DotNetNuke.Entities.Portals;
     using DotNetNuke.Services.Authentication;
     using DotNetNuke.Services.Localization;
-    using Microsoft.Extensions.DependencyInjection;
+    using DotNetNuke.Entities.Portals;
 
-    public static partial class SkinHelpers
+    public static class LoginHelper
     {
-        private const string LoginFileName = "Login.ascx";
+        private const string MyFileName = "Login.ascx";
 
-        public static IHtmlString Login(this HtmlHelper<DotNetNuke.Framework.Models.PageModel> helper, string cssClass = "SkinObject", string text = "", string logoffText = "", bool legacyMode = true, bool showInErrorPage = false)
+        public static MvcHtmlString Login(
+            this HtmlHelper helper,
+            string text = "",
+            string cssClass = "",
+            string logoffText = "",
+            bool legacyMode = true,
+            bool showInErrorPage = false)
         {
-            var nonce = helper.ViewData.Model.ContentSecurityPolicy.Nonce;
             var portalSettings = PortalSettings.Current;
             var request = HttpContext.Current.Request;
 
@@ -37,20 +38,20 @@ namespace DotNetNuke.Web.Mvc.Skins
 
             if (legacyMode)
             {
-                return BuildLegacyLogin(text, cssClass, logoffText, nonce);
+                return BuildLegacyLogin(text, cssClass, logoffText);
             }
 
-            return BuildEnhancedLogin(text, cssClass, logoffText, nonce);
+            return BuildEnhancedLogin(text, cssClass, logoffText);
         }
 
-        private static MvcHtmlString BuildLegacyLogin(string text, string cssClass, string logoffText, string nonce)
+        private static MvcHtmlString BuildLegacyLogin(string text, string cssClass, string logoffText)
         {
             var link = new TagBuilder("a");
             ConfigureLoginLink(link, text, cssClass, logoffText);
-            return new MvcHtmlString(link.ToString() + GetLoginScript(nonce));
+            return new MvcHtmlString(link.ToString() + GetLoginScript());
         }
 
-        private static MvcHtmlString BuildEnhancedLogin(string text, string cssClass, string logoffText, string nonce)
+        private static MvcHtmlString BuildEnhancedLogin(string text, string cssClass, string logoffText)
         {
             var container = new TagBuilder("div");
             container.AddCssClass("loginGroup");
@@ -60,7 +61,7 @@ namespace DotNetNuke.Web.Mvc.Skins
             ConfigureLoginLink(link, text, cssClass, logoffText);
 
             container.InnerHtml = link.ToString();
-            return new MvcHtmlString(container.ToString() + GetLoginScript(nonce));
+            return new MvcHtmlString(container.ToString() + GetLoginScript());
         }
 
         private static void ConfigureLoginLink(TagBuilder link, string text, string cssClass, string logoffText)
@@ -82,9 +83,9 @@ namespace DotNetNuke.Web.Mvc.Skins
 
             if (request.IsAuthenticated)
             {
-                var displayText = !string.IsNullOrEmpty(logoffText)
+                var displayText = !string.IsNullOrEmpty(logoffText) 
                     ? logoffText.Replace("src=\"", "src=\"" + portalSettings.ActiveTab.SkinPath)
-                    : Localization.GetString("Logout", GetSkinsResourceFile(LoginFileName));
+                    : Localization.GetString("Logout", Localization.GetResourceFile(null, MyFileName));
 
                 link.SetInnerText(displayText);
                 link.Attributes["title"] = displayText;
@@ -94,7 +95,7 @@ namespace DotNetNuke.Web.Mvc.Skins
             {
                 var displayText = !string.IsNullOrEmpty(text)
                     ? text.Replace("src=\"", "src=\"" + portalSettings.ActiveTab.SkinPath)
-                    : Localization.GetString("Login", GetSkinsResourceFile(LoginFileName));
+                    : Localization.GetString("Login", Localization.GetResourceFile(null, MyFileName));
 
                 link.SetInnerText(displayText);
                 link.Attributes["title"] = displayText;
@@ -104,7 +105,6 @@ namespace DotNetNuke.Web.Mvc.Skins
                 {
                     returnUrl = returnUrl.Substring(0, returnUrl.IndexOf("?returnurl=", StringComparison.OrdinalIgnoreCase));
                 }
-
                 returnUrl = HttpUtility.UrlEncode(returnUrl);
 
                 var loginUrl = Globals.LoginURL(returnUrl, request.QueryString["override"] != null);
@@ -114,42 +114,40 @@ namespace DotNetNuke.Web.Mvc.Skins
             }
         }
 
-        private static string GetLoginScript(string nonce)
+        private static string GetLoginScript()
         {
             var portalSettings = PortalSettings.Current;
             var request = HttpContext.Current.Request;
 
             if (!request.IsAuthenticated)
             {
-                var script = string.Format(
-                    @"
-                    <script nonce=""{0}"">
-                    $(function() {{
+                var script = @"
+                    <script>
+                    $(function() {
                         var $loginLink = $('.dnnLoginLink');
-                        if ($loginLink.length > 0) {{
-                            $loginLink.on('click', function(e) {{
+                        if ($loginLink.length > 0) {
+                            $loginLink.on('click', function(e) {
                                 e.preventDefault();
                                 var $this = $(this);
                                 var url = $this.data('url');
                                 
-                                if (!navigator.userAgent.match(/MSIE 8.0/)) {{
+                                if (!navigator.userAgent.match(/MSIE 8.0/)) {
                                     $this.prop('disabled', true);
-                                }}
-                                ",
-                    nonce);
+                                }
+                                ";
 
-                if (portalSettings.EnablePopUps &&
-                    portalSettings.LoginTabId == Null.NullInteger &&
+                if (portalSettings.EnablePopUps && 
+                    portalSettings.LoginTabId == Null.NullInteger && 
                     !AuthenticationController.HasSocialAuthenticationEnabled(null))
                 {
-                    script += string.Format(
-                        @"
+                    script += string.Format(@"
                         var popupUrl = {0};
                         window.location = popupUrl;
-                        ",
-                        UrlUtils.PopUpUrl("' + url + '", null, portalSettings, true, false, 300, 650));
+                        ", 
+                        UrlUtils.PopUpUrl("' + url + '", null, portalSettings, true, false, 300, 650)
+                    );
                 }
-                else
+                else 
                 {
                     script += "window.location = url;";
                 }
@@ -166,4 +164,4 @@ namespace DotNetNuke.Web.Mvc.Skins
             return string.Empty;
         }
     }
-}
+} 

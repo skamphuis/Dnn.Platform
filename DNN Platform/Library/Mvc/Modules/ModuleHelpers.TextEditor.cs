@@ -31,17 +31,18 @@ namespace DotNetNuke.Web.Mvc.Containers
     {
         public static IHtmlString TextEditorFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression)
         {
-            LoadAllSettings(htmlHelper.ViewContext);
-
             // HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes)
             var id = htmlHelper.IdFor(expression);
+
+            LoadAllSettings(htmlHelper.ViewContext, id.ToString());
+
             var attrs = new Dictionary<string, object>();
             attrs.Add("id", id);
             attrs.Add("data-ckeditor", true);
             return htmlHelper.TextAreaFor(expression, attrs);
         }
 
-        private static void LoadAllSettings(ViewContext page)
+        private static void LoadAllSettings(ViewContext page, string id)
         {
             var portalSettings = PortalController.Instance.GetCurrentPortalSettings();
             /*
@@ -270,6 +271,36 @@ namespace DotNetNuke.Web.Mvc.Containers
 
             MvcClientAPI.RegisterScript(string.Format(@"{0}_CKE_Config", editorFixedId), editorConfigScript.ToString());
             MvcClientAPI.RegisterStartupScript(string.Format(@"{0}_CKE_Startup", editorFixedId), editorScript.ToString());
+            */
+            /*
+            editorScript.Append(@"
+                if(CKEDITOR && CKEDITOR.config){
+                    CKEDITOR.config.portalId = " + portalSettings.PortalId + @";
+                    CKEDITOR.config.height = '400px';
+                    CKEDITOR.config.toolbar = [
+                        { name: 'document', items: [ 'Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates' ] },
+                        { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+                        { name: 'editing', items: [ 'Find', 'Replace', '-', 'SelectAll', '-', 'Scayt' ] },
+                        { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+                        '/',
+                        { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl' ] },
+                        { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+                        { name: 'insert', items: [ 'Image', 'Table', 'HorizontalRule', 'SpecialChar' ] },
+                        '/',
+                        { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+                        { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+                        { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] }
+                    ];
+                    CKEDITOR.config.removePlugins = 'elementspath,resize';
+                    CKEDITOR.config.extraPlugins = 'dnnpages';
+                    CKEDITOR.config.allowedContent = true;
+                }
+                jQuery('[data-ckeditor]').each(function() {
+                    CKEDITOR.replace(this.id);
+                });
+            ");
+
+            MvcClientAPI.RegisterStartupScript("CKEditorConfig", editorScript.ToString());
             */
         }
 

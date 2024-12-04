@@ -5,6 +5,7 @@
 namespace DotNetNuke.Web.Mvc.Skins
 {
     using System;
+    using System.Linq;
     using System.Net.NetworkInformation;
     using System.Web;
     using System.Web.Mvc;
@@ -20,6 +21,21 @@ namespace DotNetNuke.Web.Mvc.Skins
             if (addTag || helper.ViewContext.HttpContext.IsDebuggingEnabled)
             {
                 return new MvcHtmlString(string.Format("<!--CDF({0}|{1}|{2}|{3})-->", ClientDependencyType.Css, filePath, forceProvider, priority));
+            }
+
+            return new MvcHtmlString(string.Empty);
+        }
+
+        public static IHtmlString DnnCssInclude(this HtmlHelper<DotNetNuke.Framework.Models.PageModel> helper, string bundleName, string[] filePaths, string pathNameAlias = "", int priority = 100, bool addTag = false, string name = "", string version = "", bool forceVersion = false, string forceProvider = "", bool forceBundle = false, string cssMedia = "")
+        {
+            // ClientDependency.Core.BundleManager.CreateCssBundle(
+            //    bundleName,
+            //    filePaths.Select(p => new CssFile(p) { PathNameAlias = pathNameAlias, Priority = priority }).ToArray());
+
+            // helper.RequiresCssBundle(bundleName);
+            if (addTag || helper.ViewContext.HttpContext.IsDebuggingEnabled)
+            {
+                return new MvcHtmlString(string.Format("<!--CDF({0}|{1}|{2}|{3})-->", ClientDependencyType.Css, string.Join(",", filePaths), forceProvider, priority));
             }
 
             return new MvcHtmlString(string.Empty);

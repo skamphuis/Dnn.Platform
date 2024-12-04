@@ -2,9 +2,18 @@
 @using DotNetNuke.Web.DDRMenu
 @model DotNetNuke.Framework.Models.PageModel
 
+@{
+    Model.ContentSecurityPolicy.AddFontSource(DotNetNuke.Web.Mvc.Csp.CspSourceType.Host, "https://fonts.gstatic.com");
+    // Model.ContentSecurityPolicy.AddStyleSource(DotNetNuke.Web.Mvc.Csp.CspSourceType.Inline);
+    Model.ContentSecurityPolicy.AddScriptSource(DotNetNuke.Web.Mvc.Csp.CspSourceType.StrictDynamic);
+    // Model.ContentSecurityPolicy.AddScriptSource(DotNetNuke.Web.Mvc.Csp.CspSourceType.Inline); // for backward compatibility
+}
+
 @section metas {
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     @*<dnn:META ID="META1" runat="server" Name="viewport" Content="width=device-width,initial-scale=1" />*@
-    @Html.Meta(name:  "viewport", content: "width=device-width,initial-scale=1")
+    @Html.Meta(name: "viewport", content: "width=device-width,initial-scale=1")
+    @*<meta http-equiv="Content-Security-Policy" content="default-src 'self';base-uri 'self';form-action 'self';object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline' ;font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' 'nonce-@(Model.Nonce)' ;">*@
 }
 <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -33,7 +42,7 @@
                         @Html.Search(id: "dnnSearch", showSite: false, showWeb: false, submit: "Search", cssClass: "SearchButton")
                     </div>
                     <!-- search action for Search function on small devices -->
-                    <a id="search-action" aria-label="Search"></a>
+                    <a id="search-action" aria-label="Search" role="search"></a>
                     <div id="login" class="pull-right">
                         @*<dnn:LOGIN ID="dnnLogin" CssClass="LoginLink" runat="server" LegacyMode="false" />*@
                         @Html.Login(cssClass: "LoginLink", legacyMode: false)
@@ -84,7 +93,7 @@
                 @*<dnn:BREADCRUMB ID="dnnBreadcrumb" runat="server" CssClass="breadcrumbLink" RootLevel="0" Separator="&lt;img src=&quot;/Portals/_default/Skins/Xcillion/Images/breadcrumb-arrow.png&quot; alt=&quot;breadcrumb separator&quot;&gt;" HideWithNoBreadCrumb="true" />*@
                 @Html.BreadCrumb(cssClass: "breadcrumbLink",
                                     rootLevel: 0,
-                                    separator: "<img src=\"/Portals/_default/Skins/Xcillion/Images/breadcrumb-arrow.png\" alt=\"breadcrumb separator\" />",
+                                    separator: "<img src=\"/Portals/_default/Skins/Xcillion/Images/breadcrumb-arrow.png\" alt=\"breadcrumb separator\" width=\"4\" height=\"9\" />",
                                     hideWithNoBreadCrumb: true)
             </div>
             <div id="mainContent-inner">
@@ -151,3 +160,14 @@
 
 @* CSS & JS includes *@
 @Html.SkinPartial("Common/AddFiles")
+
+@{
+    Context.Response.AddHeader("Content-Security-Policy", Model.ContentSecurityPolicy.GeneratePolicy());
+    // Context.Response.AddHeader("Content-Security-Policy", string.Format("default-src 'self';base-uri 'self';form-action 'self';object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline' ;font-src 'self' https://fonts.gstatic.com; script-src 'strict-dynamic' 'unsafe-inline' 'nonce-{0}' ;", Model.Nonce));
+    Context.Response.AddHeader("X-XSS-Protection", "1; mode=block");
+    //Context.Response.AddHeader("X-Frame-Options", "SAMEORIGIN");
+    Context.Response.AddHeader("X-Content-Type-Options", "nosniff");
+    Context.Response.AddHeader("Referrer-Policy", "same-origin");
+    Context.Response.AddHeader("Permissions-Policy", "camera=self");
+    Context.Response.AddHeader("Strict-Transport-Security", "max-age=2592000");
+}

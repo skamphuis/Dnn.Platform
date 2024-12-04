@@ -834,6 +834,7 @@
     <Content Include="Licenses\Effority Ealo %28Ms-RL%29.txt.resources" />
     <Content Include="Portals\_default\Skins\_default\WebControlSkin\Default\DropDownList.Default.css" />
     <Content Include="Portals\_default\Skins\_default\WebControlSkin\Default\GridView.Default.css" />
+    <Content Include="Resources\Search\MvcSearchSkinObjectPreview.js" />
     <Content Include="Resources\Shared\components\DatePicker\moment.min.js" />
     <Content Include="Resources\Shared\components\DatePicker\pikaday.css" />
     <Content Include="Resources\Shared\components\DatePicker\pikaday.jquery.js" />

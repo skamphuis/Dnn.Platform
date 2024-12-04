@@ -7,21 +7,16 @@ namespace DotNetNuke.Web.Mvc.Skins
     using System;
     using System.Web;
     using System.Web.Mvc;
-
-    using DotNetNuke.Common;
-    using DotNetNuke.Common.Utilities;
-    using DotNetNuke.Entities.Host;
-    using DotNetNuke.Entities.Icons;
-    using DotNetNuke.Entities.Portals;
     using DotNetNuke.Services.Localization;
-    using DotNetNuke.Web.Client;
-    using DotNetNuke.Web.Client.ClientResourceManagement;
+    using DotNetNuke.Entities.Host;
+    using DotNetNuke.Common.Utilities;
+    using DotNetNuke.Common;
 
-    public static partial class SkinHelpers
+    public static class SearchHelper
     {
         private const string MyFileName = "Search.ascx";
 
-        public static MvcHtmlString Search2(
+        public static MvcHtmlString Search(
             this HtmlHelper helper,
             bool useDropDownList = false,
             bool showWeb = true,
@@ -34,24 +29,20 @@ namespace DotNetNuke.Web.Mvc.Skins
             int minCharRequired = 2,
             int autoSearchDelayInMilliSecond = 400)
         {
-            Framework.ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
-            MvcClientResourceManager.RegisterStyleSheet(helper.ViewContext, "~/Resources/Search/SearchSkinObjectPreview.css", FileOrder.Css.ModuleCss);
-            MvcClientResourceManager.RegisterScript(helper.ViewContext, "~/Resources/Search/SearchSkinObjectPreview.js");
-
             if (!useDropDownList)
             {
                 return BuildClassicSearch(showWeb, showSite, cssClass, submit, webText, siteText, enableWildSearch, minCharRequired, autoSearchDelayInMilliSecond);
             }
-
+            
             return BuildDropDownSearch(cssClass, submit, webText, siteText, enableWildSearch, minCharRequired, autoSearchDelayInMilliSecond);
         }
 
         private static MvcHtmlString BuildClassicSearch(
-            bool showWeb,
-            bool showSite,
-            string cssClass,
-            string submit,
-            string webText,
+            bool showWeb, 
+            bool showSite, 
+            string cssClass, 
+            string submit, 
+            string webText, 
             string siteText,
             bool enableWildSearch,
             int minCharRequired,
@@ -73,7 +64,7 @@ namespace DotNetNuke.Web.Mvc.Skins
 
                 var label = new TagBuilder("label");
                 label.Attributes["for"] = "WebRadioButton";
-                label.SetInnerText(webText ?? Localization.GetString("Web", GetSkinsResourceFile(MyFileName)));
+                label.SetInnerText(webText ?? Localization.GetString("Web", Localization.GetResourceFile(null, MyFileName)));
                 container.InnerHtml += label.ToString();
             }
 
@@ -89,7 +80,7 @@ namespace DotNetNuke.Web.Mvc.Skins
 
                 var label = new TagBuilder("label");
                 label.Attributes["for"] = "SiteRadioButton";
-                label.SetInnerText(siteText ?? Localization.GetString("Site", GetSkinsResourceFile(MyFileName)));
+                label.SetInnerText(siteText ?? Localization.GetString("Site", Localization.GetResourceFile(null, MyFileName)));
                 container.InnerHtml += label.ToString();
             }
 
@@ -121,7 +112,7 @@ namespace DotNetNuke.Web.Mvc.Skins
 
             var img = new TagBuilder("img");
             img.Attributes["src"] = IconController.IconURL("Action");
-            img.Attributes["alt"] = Localization.GetString("DropDownGlyph.AltText", GetSkinsResourceFile(MyFileName));
+            img.Attributes["alt"] = Localization.GetString("DropDownGlyph.AltText", Localization.GetResourceFile(null, MyFileName));
             searchIcon.InnerHtml = img.ToString(TagRenderMode.SelfClosing);
 
             searchBorder.InnerHtml += searchIcon.ToString();
@@ -132,12 +123,12 @@ namespace DotNetNuke.Web.Mvc.Skins
 
             var siteLi = new TagBuilder("li");
             siteLi.GenerateId("SearchIconSite");
-            siteLi.SetInnerText(siteText ?? Localization.GetString("Site", GetSkinsResourceFile(MyFileName)));
+            siteLi.SetInnerText(siteText ?? Localization.GetString("Site", Localization.GetResourceFile(null, MyFileName)));
             choices.InnerHtml += siteLi.ToString();
 
             var webLi = new TagBuilder("li");
             webLi.GenerateId("SearchIconWeb");
-            webLi.SetInnerText(webText ?? Localization.GetString("Web", GetSkinsResourceFile(MyFileName)));
+            webLi.SetInnerText(webText ?? Localization.GetString("Web", Localization.GetResourceFile(null, MyFileName)));
             choices.InnerHtml += webLi.ToString();
 
             searchBorder.InnerHtml += choices.ToString();
@@ -175,14 +166,13 @@ namespace DotNetNuke.Web.Mvc.Skins
             var button = new TagBuilder("a");
             button.AddCssClass("SearchButton " + cssClass);
             button.Attributes["href"] = "#";
-            button.InnerHtml = submit ?? Localization.GetString("Search", GetSkinsResourceFile(MyFileName));
+            button.InnerHtml = submit ?? Localization.GetString("Search", Localization.GetResourceFile(null, MyFileName));
             return button.ToString();
         }
 
         private static string GetInitScript(bool useDropDownList, bool enableWildSearch, int minCharRequired, int autoSearchDelayInMilliSecond)
         {
-            return string.Format(
-                @"
+            return string.Format(@"
                 <script>
                 $(function() {{
                     if (typeof dnn != 'undefined' && typeof dnn.searchSkinObject != 'undefined') {{
@@ -206,27 +196,28 @@ namespace DotNetNuke.Web.Mvc.Skins
                 enableWildSearch.ToString().ToLowerInvariant(),
                 System.Threading.Thread.CurrentThread.CurrentCulture.ToString(),
                 PortalSettings.Current.PortalId,
-                useDropDownList ? "if (typeof dnn.initDropdownSearch != 'undefined') { dnn.initDropdownSearch(searchSkinObject); }" : string.Empty);
+                useDropDownList ? "if (typeof dnn.initDropdownSearch != 'undefined') { dnn.initDropdownSearch(searchSkinObject); }" : string.Empty
+            );
         }
 
         private static string GetSeeMoreText()
         {
-            return Localization.GetSafeJSString("SeeMoreResults", GetSkinsResourceFile(MyFileName));
+            return Localization.GetSafeJSString("SeeMoreResults", Localization.GetResourceFile(null, MyFileName));
         }
 
-        private static string GetNoResultText()
+        private static string GetNoResultText() 
         {
-            return Localization.GetSafeJSString("NoResult", GetSkinsResourceFile(MyFileName));
+            return Localization.GetSafeJSString("NoResult", Localization.GetResourceFile(null, MyFileName));
         }
 
         private static string GetClearQueryText()
         {
-            return Localization.GetSafeJSString("SearchClearQuery", GetSkinsResourceFile(MyFileName));
+            return Localization.GetSafeJSString("SearchClearQuery", Localization.GetResourceFile(null, MyFileName));
         }
 
         private static string GetPlaceholderText()
         {
-            return Localization.GetSafeJSString("Placeholder", GetSkinsResourceFile(MyFileName));
+            return Localization.GetSafeJSString("Placeholder", Localization.GetResourceFile(null, MyFileName));
         }
     }
-}
+} 
