@@ -84,6 +84,14 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DotNetNuke.ContentSecurityPolicy\DotNetNuke.ContentSecurityPolicy.csproj">
+      <Project>{fa9db2bc-a757-48f7-9178-248b8b28ecf5}</Project>
+      <Name>DotNetNuke.ContentSecurityPolicy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DotNetNuke.Web.MvcPipeline\DotNetNuke.Web.MvcPipeline.csproj">
+      <Project>{35fc80b3-b89a-46fd-b8b3-bd2071b20d9c}</Project>
+      <Name>DotNetNuke.Web.MvcPipeline</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Library\DotNetNuke.Library.csproj">
       <Project>{6b29aded-7b56-4484-bea5-c0e09079535b}</Project>
       <Name>DotNetNuke.Library</Name>
@@ -171,6 +179,7 @@
     <Content Include="Skin\Includes\social-linkedin.png" />
     <Content Include="Skin\Includes\social-sprite.png" />
     <Content Include="Skin\Includes\social-twitter.png" />
+    <Content Include="Skin\Inner-mvc.ascx" />
     <Content Include="Skin\Inner.ascx" />
     <Content Include="Skin\Inner.jpg" />
     <Content Include="Skin\Js\jquery.smartmenus.bootstrap.js" />
@@ -201,6 +210,7 @@
     <Content Include="Skin.build" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Skin\Views\PopUp.cshtml" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -230,6 +240,7 @@
     <Content Include="Skin\Views\web.config" />
     <Content Include="Skin\Views\Common\AddFiles.cshtml" />
     <Content Include="Skin\Views\Home.cshtml" />
+    <Content Include="Skin\Views\Inner-mvc.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

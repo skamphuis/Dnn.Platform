@@ -1,18 +1,19 @@
-@using DotNetNuke.Web.Mvc.Skins
+@using DotNetNuke.Web.MvcPipeline.Models
+@using DotNetNuke.Web.MvcPipeline.Skins
 
-@model DotNetNuke.Framework.Models.PageModel
+@model PageModel
 
 @Html.DnnCssInclude(filePath: "bootstrap/css/bootstrap.min.css", pathNameAlias: "SkinPath", priority: 12)
 @Html.DnnCssInclude("css/jquery.smartmenus.bootstrap.css", pathNameAlias: "SkinPath", priority: 13)
 @Html.DnnCssInclude("Menus/MainMenu/MainMenu.css", pathNameAlias: "SkinPath", priority: 14)
 
 @*@Html.DnnCssInclude(bundleName: "SkinCss",
-                    filePaths: new[] { 
-                        "bootstrap/css/bootstrap.min.css", 
-                        "css/jquery.smartmenus.bootstrap.css",
-                        "Menus/MainMenu/MainMenu.css",
-                    }, 
-                    pathNameAlias: "SkinPath", priority: 12)*@
+    filePaths: new[] {
+        "bootstrap/css/bootstrap.min.css",
+        "css/jquery.smartmenus.bootstrap.css",
+        "Menus/MainMenu/MainMenu.css",
+    },
+    pathNameAlias: "SkinPath", priority: 12)*@
 
 
 @Html.DnnJsInclude("bootstrap/js/bootstrap.min.js", pathNameAlias: "SkinPath", defer: true)

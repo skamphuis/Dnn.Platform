@@ -8,6 +8,7 @@ namespace DotNetNuke.Modules.Html.Mvc
 
     using DotNetNuke.Modules.Html;
     using DotNetNuke.Web.Mvc.Page;
+    using DotNetNuke.Web.MvcPipeline.Models;
 
     public class MyWorkModel : ModuleModelBase
     {

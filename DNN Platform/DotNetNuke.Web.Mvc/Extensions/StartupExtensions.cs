@@ -8,7 +8,6 @@ namespace DotNetNuke.Web.Mvc.Extensions
     using DotNetNuke.DependencyInjection.Extensions;
     using DotNetNuke.Instrumentation;
     using DotNetNuke.Web.Mvc.Framework.Controllers;
-    using DotNetNuke.Web.Mvc.Skins.Controllers;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -33,6 +32,7 @@ namespace DotNetNuke.Web.Mvc.Extensions
                 services.TryAddTransient(controller);
             }
 
+            /*
             var mvcControllerTypes = allTypes.Types
                 .Where(
                     type => typeof(IMvcController).IsAssignableFrom(type) &&
@@ -41,6 +41,7 @@ namespace DotNetNuke.Web.Mvc.Extensions
             {
                 services.TryAddTransient(controller);
             }
+            */
         }
     }
 }

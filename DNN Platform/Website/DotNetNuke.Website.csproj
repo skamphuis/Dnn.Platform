@@ -554,12 +554,12 @@
     <Compile Include="admin\Users\ViewProfile.ascx.designer.cs">
       <DependentUpon>ViewProfile.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\ModuleActionsViewController.cs" />
+    <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\ModuleActionsController.cs" />
-    <Compile Include="Controllers\ModuleActionsDeleteModel.cs" />
+    <Compile Include="Models\ModuleActionsDeleteModel.cs" />
+    <Compile Include="Controllers\ModuleActionsViewController.cs" />
     <Compile Include="Controllers\PrivacyController.cs" />
     <Compile Include="Controllers\TermsController.cs" />
-    <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -800,6 +800,7 @@
     <Compile Include="KeepAlive.aspx.designer.cs">
       <DependentUpon>KeepAlive.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Models\ModuleActionsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="admin\Skins\DnnJsInclude.xml">
       <SubType>Designer</SubType>
@@ -3418,7 +3419,6 @@
   <ItemGroup>
     <Folder Include="Install\Provider\" />
     <Folder Include="Install\Temp\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
@@ -3451,6 +3451,10 @@
       <Project>{6928a9b1-f88a-4581-a132-d3eb38669bb0}</Project>
       <Name>DotNetNuke.Abstractions</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DotNetNuke.ContentSecurityPolicy\DotNetNuke.ContentSecurityPolicy.csproj">
+      <Project>{fa9db2bc-a757-48f7-9178-248b8b28ecf5}</Project>
+      <Name>DotNetNuke.ContentSecurityPolicy</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotNetNuke.Instrumentation\DotNetNuke.Instrumentation.csproj">
       <Project>{3cd5f6b8-8360-4862-80b6-f402892db7dd}</Project>
       <Name>DotNetNuke.Instrumentation</Name>
@@ -3463,9 +3467,9 @@
       <Project>{03e3afa5-ddc9-48fb-a839-ad4282ce237e}</Project>
       <Name>DotNetNuke.Web.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DotNetNuke.Web.Mvc\DotNetNuke.Web.Mvc.csproj">
-      <Project>{64dc5798-9d37-4f8d-97dd-8403e6e70dd3}</Project>
-      <Name>DotNetNuke.Web.Mvc</Name>
+    <ProjectReference Include="..\DotNetNuke.Web.MvcPipeline\DotNetNuke.Web.MvcPipeline.csproj">
+      <Project>{35FC80B3-B89A-46FD-B8B3-BD2071B20D9C}</Project>
+      <Name>DotNetNuke.Web.MvcPipeline</Name>
     </ProjectReference>
     <ProjectReference Include="..\DotNetNuke.WebUtility\DotNetNuke.WebUtility.vbproj">
       <Project>{4912f062-f8a8-4f9d-8f8e-244ebee1acbd}</Project>

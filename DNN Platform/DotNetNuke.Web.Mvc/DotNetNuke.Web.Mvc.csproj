@@ -130,8 +130,6 @@
     <Compile Include="Common\PropertyHelper.cs" />
     <Compile Include="Common\TypeHelper.cs" />
     <Compile Include="DnnMvcDependencyResolver.cs" />
-    <Compile Include="Page\DnnMvcPageHandler.cs" />
-    <Compile Include="Page\DnnMvcPageRouteHandler.cs" />
     <Compile Include="Extensions\StartupExtensions.cs" />
     <Compile Include="Framework\ActionFilters\AuthFilterContext.cs" />
     <Compile Include="Framework\ActionFilters\AuthorizeAttributeBase.cs" />
@@ -153,13 +151,6 @@
     <Compile Include="Helpers\DnnHtmlHelper{TModel}.cs" />
     <Compile Include="HttpConfigurationExtensions.cs" />
     <Compile Include="HttpContextExtensions.cs" />
-    <Compile Include="Page\ModuleControllerBase.cs" />
-    <Compile Include="Page\ModuleHelpers.cs" />
-    <Compile Include="Page\ModuleModelBase.cs" />
-    <Compile Include="Page\ModuleSettingsViewController.cs" />
-    <Compile Include="Page\ModuleSettingsController.cs" />
-    <Compile Include="Page\ModuleSettingsModel.cs" />
-    <Compile Include="Page\TabModel.cs" />
     <Compile Include="Routing\HttpRequestExtensions.cs" />
     <Compile Include="ITabAndModuleInfoProvider.cs" />
     <Compile Include="Routing\ConstraintValidation.cs" />
@@ -251,9 +242,7 @@
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Skins\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

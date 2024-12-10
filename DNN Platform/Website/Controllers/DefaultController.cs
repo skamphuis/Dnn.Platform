@@ -21,12 +21,12 @@ namespace DotNetNuke.Framework.Controllers
     using DotNetNuke.Abstractions;
     using DotNetNuke.Application;
     using DotNetNuke.Common.Utilities;
+    using DotNetNuke.ContentSecurityPolicy;
     using DotNetNuke.Entities.Host;
     using DotNetNuke.Entities.Modules;
     using DotNetNuke.Entities.Portals;
     using DotNetNuke.Entities.Tabs;
     using DotNetNuke.Framework.JavaScriptLibraries;
-    using DotNetNuke.Framework.Models;
     using DotNetNuke.Mvc;
     using DotNetNuke.Security.Permissions;
     using DotNetNuke.Services.Exceptions;
@@ -41,10 +41,11 @@ namespace DotNetNuke.Framework.Controllers
     using DotNetNuke.UI.Utilities;
     using DotNetNuke.Web.Client;
     using DotNetNuke.Web.Client.ClientResourceManagement;
-    using DotNetNuke.Web.Mvc.Csp;
-    using DotNetNuke.Web.Mvc.Framework.ActionFilters;
-    using DotNetNuke.Web.Mvc.Skins;
-    using DotNetNuke.Web.Mvc.Skins.Controllers;
+
+    // using DotNetNuke.Web.Mvc.Framework.ActionFilters;
+    using DotNetNuke.Web.MvcPipeline.Controllers;
+    using DotNetNuke.Web.MvcPipeline.Exceptions;
+    using DotNetNuke.Web.MvcPipeline.Models;
     using Microsoft.Extensions.DependencyInjection;
 
     using Globals = DotNetNuke.Common.Globals;
@@ -71,13 +72,13 @@ namespace DotNetNuke.Framework.Controllers
         {
             this.HttpContext.Items.Add("CSP-NONCE", this.ContentSecurityPolicy.Nonce);
 
-            this.ContentSecurityPolicy.AddDefaultSource(CspSourceType.Self);
-            this.ContentSecurityPolicy.AddImgSource(CspSourceType.Self);
-            this.ContentSecurityPolicy.AddFontSource(CspSourceType.Self);
-            this.ContentSecurityPolicy.AddStyleSource(CspSourceType.Self);
-            this.ContentSecurityPolicy.AddObjectSource(CspSourceType.None);
-            this.ContentSecurityPolicy.AddBaseUriSource(CspSourceType.None);
-            this.ContentSecurityPolicy.AddScriptSource(CspSourceType.Nonce);
+            this.ContentSecurityPolicy.DefaultSource.AddSelf();
+            this.ContentSecurityPolicy.ImgSource.AddSelf();
+            this.ContentSecurityPolicy.FontSource.AddSelf();
+            this.ContentSecurityPolicy.StyleSource.AddSelf();
+            this.ContentSecurityPolicy.ObjectSource.AddNone();
+            this.ContentSecurityPolicy.BaseUriSource.AddNone();
+            this.ContentSecurityPolicy.ScriptSource.AddNonce(this.ContentSecurityPolicy.Nonce);
 
             // this.ContentSecurityPolicy.AddScriptSource(CspSourceType.Scheme, "http:");
             // this.ContentSecurityPolicy.AddScriptSource(CspSourceType.Scheme, "https:");
@@ -129,6 +130,7 @@ namespace DotNetNuke.Framework.Controllers
                 TabId = this.PortalSettings?.ActiveTab?.TabID,
                 Language = language,
                 ContentSecurityPolicy = this.ContentSecurityPolicy,
+                NavigationManager = this.NavigationManager,
             };
             try
             {
@@ -176,7 +178,7 @@ namespace DotNetNuke.Framework.Controllers
             SkinModel ctlSkin;
             if (this.PortalSettings.EnablePopUps)
             {
-                ctlSkin = UrlUtils.InPopUp() ? SkinModel.GetPopUpSkin(this) : SkinModel.GetSkin(this);
+                ctlSkin = UrlUtils.InPopUp() ? SkinModel.GetPopUpSkin(this, page) : SkinModel.GetSkin(this, page);
 
                 // register popup js
                 JavaScriptLibraries.JavaScript.RequestRegistration(CommonJs.jQueryUI);
@@ -189,7 +191,7 @@ namespace DotNetNuke.Framework.Controllers
             }
             else
             {
-                ctlSkin = SkinModel.GetSkin(this);
+                ctlSkin = SkinModel.GetSkin(this, page);
             }
 
             /*

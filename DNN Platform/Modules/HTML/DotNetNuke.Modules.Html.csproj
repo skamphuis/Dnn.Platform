@@ -204,6 +204,7 @@
     <Content Include="App_LocalResources\MyWork.ascx.resx" />
     <Content Include="App_LocalResources\Settings.ascx.resx" />
     <Content Include="App_LocalResources\SharedResources.resx" />
+    <Content Include="CkEditorContents.css" />
     <Content Include="EditHtml.ascx" />
     <Content Include="HtmlModule.ascx" />
     <Content Include="Images\html.png" />
@@ -255,9 +256,13 @@
       <Project>{6928A9B1-F88A-4581-A132-D3EB38669BB0}</Project>
       <Name>DotNetNuke.Abstractions</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DotNetNuke.Web.Mvc\DotNetNuke.Web.Mvc.csproj">
-      <Project>{64dc5798-9d37-4f8d-97dd-8403e6e70dd3}</Project>
-      <Name>DotNetNuke.Web.Mvc</Name>
+    <ProjectReference Include="..\..\DotNetNuke.ContentSecurityPolicy\DotNetNuke.ContentSecurityPolicy.csproj">
+      <Project>{fa9db2bc-a757-48f7-9178-248b8b28ecf5}</Project>
+      <Name>DotNetNuke.ContentSecurityPolicy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DotNetNuke.Web.MvcPipeline\DotNetNuke.Web.MvcPipeline.csproj">
+      <Project>{35fc80b3-b89a-46fd-b8b3-bd2071b20d9c}</Project>
+      <Name>DotNetNuke.Web.MvcPipeline</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DotNetNuke.Web\DotNetNuke.Web.csproj">
       <Project>{ee1329fe-fd88-4e1a-968c-345e394ef080}</Project>

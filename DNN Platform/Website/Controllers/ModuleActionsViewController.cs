@@ -32,7 +32,6 @@ namespace DotNetNuke.Website.Controllers
     using DotNetNuke.UI.Modules;
     using DotNetNuke.Web.Client;
     using DotNetNuke.Web.Client.ClientResourceManagement;
-    using DotNetNuke.Web.Mvc.Common;
     using DotNetNuke.Website.Models;
     using Newtonsoft.Json;
 
@@ -40,6 +39,8 @@ namespace DotNetNuke.Website.Controllers
     {
         private readonly List<int> validIDs = new List<int>();
         private ModuleAction actionRoot;
+
+        private Dictionary<string, string> actionScripts = new Dictionary<string, string>();
 
         public ModuleInstanceContext ModuleContext { get; private set; }
 
@@ -134,6 +135,7 @@ namespace DotNetNuke.Website.Controllers
                 SupportsMove = this.SupportsMove,
                 IsShared = this.IsShared,
                 ModuleTitle = moduleInfo.ModuleTitle,
+                ActionScripts = this.actionScripts,
             };
 
             return this.View(viewModel);
@@ -163,7 +165,7 @@ namespace DotNetNuke.Website.Controllers
             // base.OnLoad(e);
             this.ModuleContext = new ModuleInstanceContext() { Configuration = moduleInfo };
             ModuleActionCollection moduleActions = new ModuleActionCollection();
-            var desktopModule = DesktopModuleControllerAdapter.Instance.GetDesktopModule(moduleInfo.DesktopModuleID, moduleInfo.PortalID);
+            var desktopModule = DesktopModuleController.GetDesktopModule(moduleInfo.DesktopModuleID, moduleInfo.PortalID);
             if (!string.IsNullOrEmpty(desktopModule.BusinessControllerClass))
             {
                 var businessController = Reflection.CreateType(desktopModule.BusinessControllerClass);
@@ -210,6 +212,7 @@ namespace DotNetNuke.Website.Controllers
                     if (!UIUtilities.IsLegacyUI(this.ModuleContext.ModuleId, action.ControlKey, this.ModuleContext.PortalId) && action.Url.Contains("ctl"))
                     {
                         action.ClientScript = UrlUtils.PopUpUrl(action.Url, null, this.PortalSettings, true, false);
+                        this.actionScripts.Add(action.Url, action.ClientScript);
                     }
                 }
             }

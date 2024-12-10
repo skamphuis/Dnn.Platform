@@ -14,6 +14,7 @@ namespace DotNetNuke.Modules.Html.Mvc
 
     using DotNetNuke.Abstractions;
     using DotNetNuke.Common;
+    using DotNetNuke.ContentSecurityPolicy;
     using DotNetNuke.Entities.Content.Workflow.Entities;
     using DotNetNuke.Entities.Modules;
     using DotNetNuke.Entities.Modules.Settings;
@@ -25,10 +26,10 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Services.Localization;
     using DotNetNuke.Web.Client.ClientResourceManagement;
     using DotNetNuke.Web.Mvc;
-    using DotNetNuke.Web.Mvc.Csp;
-    using DotNetNuke.Web.Mvc.Page;
+
+    // using DotNetNuke.Web.Mvc;
+    using DotNetNuke.Web.MvcPipeline.Controllers;
     using DotNetNuke.Website.Controllers;
-    using DotNetNuke.Website.Models;
     using Microsoft.Extensions.DependencyInjection;
 
     using static DotNetNuke.Modules.Html.Mvc.DNN_HTMLController;
@@ -111,12 +112,9 @@ namespace DotNetNuke.Modules.Html.Mvc
             MvcClientResourceManager.RegisterStyleSheet(this.ControllerContext, "~/DesktopModules/HTML/edit.css");
             MvcClientResourceManager.RegisterScript(this.ControllerContext, "~/DesktopModules/HTML/edit.js");
 
-            this.contentSecurityPolicy.AddStyleSource(CspSourceType.Inline);
-            this.contentSecurityPolicy.AddScriptSource(CspSourceType.Self);
-            this.contentSecurityPolicy.AddScriptSource(CspSourceType.Inline);
-            this.contentSecurityPolicy.RemoveScriptSources(CspSourceType.Nonce);
-            this.contentSecurityPolicy.RemoveScriptSources(CspSourceType.StrictDynamic);
-            this.contentSecurityPolicy.AddImgSource(CspSourceType.Scheme, "data:");
+            this.contentSecurityPolicy.StyleSource.AddInline();
+            this.contentSecurityPolicy.ScriptSource.AddSelf().AddInline();
+            this.contentSecurityPolicy.ImgSource.AddScheme("data:");
             return this.View(module, model);
         }
 

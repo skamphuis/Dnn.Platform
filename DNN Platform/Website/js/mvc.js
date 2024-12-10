@@ -134,6 +134,10 @@ Sys.Application = {
     }
 }
 
+window.$find = function (id) {
+    throw new Error('Not implemented'); // for making popups working
+}
+
 window.$get = function (id, element) {
 
     if (!element) return document.getElementById(id);

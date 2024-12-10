@@ -10,6 +10,7 @@ namespace DotNetNuke.Entities.Urls
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Security.Principal;
     using System.Text.RegularExpressions;
     using System.Threading;
@@ -57,10 +58,22 @@ namespace DotNetNuke.Entities.Urls
                 parentTraceId);
         }
 
-        internal static bool IsMvc(UrlAction result, NameValueCollection queryStringCol)
+        internal static bool IsMvc(UrlAction result, NameValueCollection queryStringCol, HttpContext context, int tabId, int portalId)
         {
             var mvcCtls = new[] { "Module", "Terms", "Privacy" };
             bool mvcCtl = false;
+            /*
+            bool mvcSkin = false;
+            if (context.Items.Contains("PortalSettings"))
+            {
+                var ps = (PortalSettings)context.Items["PortalSettings"];
+                if (ps != null)
+                {
+                    mvcSkin = !string.IsNullOrEmpty(PortalSettings.Current.ActiveTab.SkinSrc) &&
+                            PortalSettings.Current.ActiveTab.SkinSrc.EndsWith("mvc");
+                }
+            }
+            */
 
             if (result.RewritePath.Contains("&ctl="))
             {
@@ -71,16 +84,36 @@ namespace DotNetNuke.Entities.Urls
 
                 if (mvcCtl && result.RewritePath.Contains("&ctl=Module"))
                 {
-                    mvcCtl = queryStringCol["ReturnURL"] != null && queryStringCol["ReturnURL"].EndsWith("mvc");
+                    TabInfo tab = null;
+                    if (tabId > 0 && portalId > -1)
+                    {
+                        tab = TabController.Instance.GetTab(tabId, portalId, false);
+                        if (tab != null)
+                        {
+                            mvcCtl = tab.GetTags().Contains("mvc");
+                        }
+                    }
+
+                    // mvcCtl = queryStringCol["ReturnURL"] != null && queryStringCol["ReturnURL"].EndsWith("mvc");
                 }
             }
             else
             {
-                mvcCtl = result.RawUrl.EndsWith("mvc");
+                TabInfo tab = null;
+                if (tabId > 0 && portalId > -1)
+                {
+                    tab = TabController.Instance.GetTab(tabId, portalId, false);
+                    if (tab != null)
+                    {
+                        mvcCtl = tab.GetTags().Contains("mvc");
+                    }
+                }
+
+                // mvcCtl = result.RawUrl.EndsWith("mvc");
             }
 
-            mvcCtl = mvcCtl && queryStringCol["mvc"] != "no";
-            mvcCtl = mvcCtl || queryStringCol["mvc"] == "yes";
+            mvcCtl = mvcCtl && !result.RewritePath.Contains("mvcpage=no") && queryStringCol["mvcpage"] != "no";
+            mvcCtl = mvcCtl || result.RewritePath.Contains("mvcpage=yes") || queryStringCol["mvcpage"] == "yes";
             return mvcCtl;
         }
 
@@ -2299,7 +2332,7 @@ namespace DotNetNuke.Entities.Urls
                         }
                         else
                         {
-                            if (IsMvc(result, queryStringCol))
+                            if (IsMvc(result, queryStringCol, context, result.TabId, result.PortalId))
                             {
                                 RewriterUtils.RewriteUrl(context, "~/" + result.RewritePath.Replace(Globals.glbDefaultPage, "mvc/Default/Page/" + result.TabId + "/" + result.CultureCode));
                             }

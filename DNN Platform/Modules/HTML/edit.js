@@ -76,7 +76,7 @@ $(function () {
         wordcount: { showCharCount: false, showWordCount: true },
         language: 'fr-fr', scayt_sLang: 'fr_FR', customConfig: '',
         skin: 'moono', linkDefaultProtocol: 'https://',
-        contentsCss: ["/Portals/_default/skins/xcillion/skin.css", "/Providers/HtmlEditorProviders/DNNConnect.CKE/css/CkEditorContents.css"],
+        contentsCss: ["/Portals/_default/skins/xcillion/skin.css", "/DesktopModules/HTML/CkEditorContents.css"],
         toolbar: [
             { name: 'document', items: ['Source', '-', 'Preview', 'Print', '-', 'Templates'] },
             {

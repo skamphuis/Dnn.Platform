@@ -1,6 +1,7 @@
-@using DotNetNuke.Security.Permissions.Models
+@using DotNetNuke.Web.MvcPipeline.Security.Models
 @using DotNetNuke.Services.Localization
-@using DotNetNuke.Mvc
+@using DotNetNuke.MvcPipeline
+
 @model ModulePermissionsGridViewModel
 
 <div class="dnnGrid dnnPermissionsGrid">
@@ -42,7 +43,7 @@
                         @foreach (var permission in role.Permissions)
                         {
                             <td>
-                                @Html.PermissionTriState(permission.Key, 
+                                @Html.PermissionTriState(permission.Key,
                                                 permission.Value.State,
                                                 permission.Value.IsFullControl,
                                                 permission.Value.IsView,
@@ -51,12 +52,12 @@
                                                    permission.Value.PermissionKey)
 
                                 @*@Html.Partial("_PermissionTriState", new PermissionTriStateModel
-                                {
-                                    //Permission = permission,
-                                    RoleId = role.RoleId
-                                })*@
+                                    {
+                                        //Permission = permission,
+                                        RoleId = role.RoleId
+                                    })*@
                                 @*@permission.Value.State
-                                @permission.Value.Enabled*@
+                                    @permission.Value.Enabled*@
                             </td>
                         }
                         <td>
@@ -111,21 +112,21 @@
     @* Add User Section *@
     <div class="dnnFormItem">
         <label>@Localization.GetString("DisplayName")</label>
-        <input type="text" id="txtUser" class="userSearchInput"  />
+        <input type="text" id="txtUser" class="userSearchInput" />
         <input type="hidden" id="hiddenUserIds" />
         <a href="#" class="dnnSecondaryAction addUserBtn">@Localization.GetString("Add")</a>
     </div>
 </div>
 
 @*@section Scripts {
-    <script>
-        $(function() {
-            var permissionsGrid = new PermissionsGrid({
-                container: '.dnnPermissionsGrid',
-                updateUrl: '@Url.Action("UpdatePermissions")',
-                addRoleUrl: '@Url.Action("AddRole")',
-                addUserUrl: '@Url.Action("AddUser")'
+        <script>
+            $(function() {
+                var permissionsGrid = new PermissionsGrid({
+                    container: '.dnnPermissionsGrid',
+                    updateUrl: '@Url.Action("UpdatePermissions")',
+                    addRoleUrl: '@Url.Action("AddRole")',
+                    addUserUrl: '@Url.Action("AddUser")'
+                });
             });
-        });
-    </script>
-}*@ 
+        </script>
+    }*@ 

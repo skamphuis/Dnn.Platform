@@ -9,7 +9,7 @@ namespace DotNetNuke.Modules.Html.Mvc
     using System.Web.Mvc;
 
     using DotNetNuke.Modules.Html;
-    using DotNetNuke.Website.Models;
+    using DotNetNuke.Web.MvcPipeline.Models;
 
     public class HtmlModuleSettingsModel : ModuleSettingsModel
     {

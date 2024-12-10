@@ -1,6 +1,6 @@
 @using ClientDependency.Core
 @using ClientDependency.Core.Mvc
-@model DotNetNuke.Framework.Models.PageModel
+@model DotNetNuke.Web.MvcPipeline.Models.PageModel
 @{
     var SkinPath = Path.GetDirectoryName(Model.Skin.SkinSrc).Replace("\\","/");
     DotNetNuke.Framework.JavaScriptLibraries.MvcJavaScript.Register(this.ViewContext);

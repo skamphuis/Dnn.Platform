@@ -14,6 +14,7 @@ namespace DotNetNuke.Modules.Html.Mvc
 
     using DotNetNuke.Abstractions;
     using DotNetNuke.Common;
+    using DotNetNuke.ContentSecurityPolicy;
     using DotNetNuke.Entities.Content.Workflow.Entities;
     using DotNetNuke.Entities.Modules;
     using DotNetNuke.Entities.Modules.Settings;
@@ -24,25 +25,25 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Services.Exceptions;
     using DotNetNuke.Services.Localization;
     using DotNetNuke.Web.Client.ClientResourceManagement;
-    using DotNetNuke.Web.Mvc;
-    using DotNetNuke.Web.Mvc.Csp;
+
+    // using DotNetNuke.Web.Mvc;
     using DotNetNuke.Web.Mvc.Page;
     using DotNetNuke.Website.Controllers;
-    using DotNetNuke.Website.Models;
     using Microsoft.Extensions.DependencyInjection;
 
     public class DNN_HTMLController : ModuleSettingsController
     {
-        private readonly INavigationManager navigationManager;
+        // private readonly INavigationManager navigationManager;
         private readonly HtmlTextController htmlTextController;
         private readonly HtmlTextLogController htmlTextLogController = new HtmlTextLogController();
         private readonly WorkflowStateController workflowStateController = new WorkflowStateController();
         private readonly HtmlModuleSettingsRepository settingsRepository;
 
-        public DNN_HTMLController(IContentSecurityPolicy csp)
+        public DNN_HTMLController(IContentSecurityPolicy csp, INavigationManager navigationManager)
+            : base(navigationManager)
         {
-            this.navigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
-            this.htmlTextController = new HtmlTextController(this.navigationManager);
+            // this.navigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
+            this.htmlTextController = new HtmlTextController(this.NavigationManager);
             this.settingsRepository = new HtmlModuleSettingsRepository();
         }
 
@@ -119,7 +120,7 @@ namespace DotNetNuke.Modules.Html.Mvc
         {
             model.ShowHistoryView = true;
             model.LocalResourceFile = "DesktopModules\\HTML\\App_LocalResources/EditHTML";
-            model.RedirectUrl = this.navigationManager.NavigateURL(model.TabId);
+            model.RedirectUrl = this.NavigationManager.NavigateURL(model.TabId);
 
             // model.LocalResourceFile = Path.Combine(Path.GetDirectoryName(this.ActiveModule.ModuleControl.ControlSrc), Localization.LocalResourceDirectory + "/" + Path.GetFileNameWithoutExtension(this.ActiveModule.ModuleControl.ControlSrc));
             try
@@ -151,7 +152,7 @@ namespace DotNetNuke.Modules.Html.Mvc
         {
             model.ShowPreviewView = true;
             model.LocalResourceFile = "DesktopModules\\HTML\\App_LocalResources/EditHTML";
-            model.RedirectUrl = this.navigationManager.NavigateURL(model.TabId);
+            model.RedirectUrl = this.NavigationManager.NavigateURL(model.TabId);
 
             // model.LocalResourceFile = Path.Combine(Path.GetDirectoryName(this.ActiveModule.ModuleControl.ControlSrc), Localization.LocalResourceDirectory + "/" + Path.GetFileNameWithoutExtension(this.ActiveModule.ModuleControl.ControlSrc));
             try
@@ -177,7 +178,7 @@ namespace DotNetNuke.Modules.Html.Mvc
         {
             model.ShowEditView = true;
             model.LocalResourceFile = "DesktopModules\\HTML\\App_LocalResources/EditHTML";
-            model.RedirectUrl = this.navigationManager.NavigateURL(model.TabId);
+            model.RedirectUrl = this.NavigationManager.NavigateURL(model.TabId);
             try
             {
                 int workflowID = this.htmlTextController.GetWorkflow(model.ModuleId, model.TabId, this.PortalSettings.PortalId).Value;
@@ -246,7 +247,7 @@ namespace DotNetNuke.Modules.Html.Mvc
         {
             model.ShowPreviewView = true;
             model.LocalResourceFile = "DesktopModules\\HTML\\App_LocalResources/EditHTML";
-            model.RedirectUrl = this.navigationManager.NavigateURL(model.TabId);
+            model.RedirectUrl = this.NavigationManager.NavigateURL(model.TabId);
 
             // model.LocalResourceFile = Path.Combine(Path.GetDirectoryName(this.ActiveModule.ModuleControl.ControlSrc), Localization.LocalResourceDirectory + "/" + Path.GetFileNameWithoutExtension(this.ActiveModule.ModuleControl.ControlSrc));
             try
@@ -314,7 +315,7 @@ namespace DotNetNuke.Modules.Html.Mvc
 
         private void UpdateWorkflow(string selectedWorkflow, string applyTo, bool replace)
         {
-            var htmlTextController = new HtmlTextController(this.navigationManager);
+            var htmlTextController = new HtmlTextController(this.NavigationManager);
             var workflow = this.htmlTextController.GetWorkflow(this.ActiveModule.ModuleID, this.ActiveModule.TabID, this.ActiveModule.PortalID);
 
             // Mettre à jour le workflow selon la sélection

@@ -2,10 +2,11 @@
 @using System.Web.Mvc
 @using System.Linq
 @using System.Linq.Expressions
-@using DotNetNuke.Web.Mvc.Modules
-@using DotNetNuke.Web.Mvc
+@using DotNetNuke.Web.MvcPipeline.Models
+@using DotNetNuke.Web.MvcPipeline.Modules
+@using DotNetNuke.Web.MvcPipeline
 
-@model DotNetNuke.Website.Models.ModuleSettingsModel
+@model ModuleSettingsModel
 
 @{
     var LocalResourceFile = "~/admin/Modules/" + Localization.LocalResourceDirectory + "/ModuleSettings.ascx";
@@ -124,32 +125,32 @@
                 <fieldset>
                     <div>
                         <div class="dnnFormItem">
-                        @if (Model.InstalledOnTabs != null && Model.InstalledOnTabs.Any())
-                        {
-                            <table class="dnn-grid">
-                                <thead>
-                                    <tr>
-                                        <th style="width:150px">Site</th>
-                                        <th>Page</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.InstalledOnTabs)
-                                    {
+                            @if (Model.InstalledOnTabs != null && Model.InstalledOnTabs.Any())
+                            {
+                                <table class="dnn-grid">
+                                    <thead>
                                         <tr>
-                                            <td>@item.InstalledOnSite</td>
-                                            <td>@item.InstalledOnLink</td>
+                                            <th style="width:150px">Site</th>
+                                            <th>Page</th>
                                         </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        }
-                        else
-                        {
-                            <div class="dnnFormMessage dnnFormWarning">
-                                <label>@Localization.GetString("lblNoRecords", LocalResourceFile)</label>
-                            </div>
-                        }
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.InstalledOnTabs)
+                                        {
+                                            <tr>
+                                                <td>@item.InstalledOnSite</td>
+                                                <td>@item.InstalledOnLink</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="dnnFormMessage dnnFormWarning">
+                                    <label>@Localization.GetString("lblNoRecords", LocalResourceFile)</label>
+                                </div>
+                            }
                         </div>
                     </div>
                 </fieldset>

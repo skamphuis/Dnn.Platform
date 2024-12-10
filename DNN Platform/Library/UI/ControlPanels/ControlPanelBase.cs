@@ -97,7 +97,7 @@ namespace DotNetNuke.UI.ControlPanels
             }
         }
 
-        internal static bool IsModuleAdminInternal()
+        public static bool IsModuleAdminInternal()
         {
             bool isModuleAdmin = Null.NullBoolean;
             foreach (ModuleInfo objModule in TabController.CurrentPage.Modules)
@@ -116,7 +116,7 @@ namespace DotNetNuke.UI.ControlPanels
             return PortalController.Instance.GetCurrentPortalSettings().ControlPanelSecurity == PortalSettings.ControlPanelPermission.ModuleEditor && isModuleAdmin;
         }
 
-        internal static bool IsPageAdminInternal()
+        public static bool IsPageAdminInternal()
         {
             bool isPageAdmin = Null.NullBoolean;
             if (TabPermissionController.CanAddContentToPage() || TabPermissionController.CanAddPage() || TabPermissionController.CanAdminPage() || TabPermissionController.CanCopyPage() ||

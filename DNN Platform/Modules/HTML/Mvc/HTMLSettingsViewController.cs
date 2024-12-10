@@ -25,9 +25,8 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Services.Localization;
     using DotNetNuke.Web.Client.ClientResourceManagement;
     using DotNetNuke.Web.Mvc;
-    using DotNetNuke.Web.Mvc.Page;
-    using DotNetNuke.Website.Controllers;
-    using DotNetNuke.Website.Models;
+
+    using DotNetNuke.Web.MvcPipeline.Controllers;
     using Microsoft.Extensions.DependencyInjection;
 
     public class HTMLSettingsViewController : ModuleControllerBase

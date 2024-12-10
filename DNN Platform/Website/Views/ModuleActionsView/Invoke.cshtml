@@ -1,6 +1,6 @@
-@model DotNetNuke.Website.Controllers.ModuleActionsModel
+@model DotNetNuke.Website.Models.ModuleActionsModel
 
-@using DotNetNuke.Web.Mvc
+@using DotNetNuke.Web.MvcPipeline
 @using DotNetNuke.UI.Modules
 @using DotNetNuke.Services.Localization
 
@@ -63,6 +63,17 @@
                 moduleTitle: '@Html.Raw(Json.Encode(Model.ModuleTitle))'
             });
         }
+        var actionScripts = {}
+        @foreach (var a in Model.ActionScripts)
+        {
+            <text>
+        actionScripts["@Html.Raw(a.Key)"] =
+            function () {
+            @Html.Raw(a.Value)
+            }
+            </text>
+        }
+
 
         var resizeThrottle;
         $(window).on('resize scroll', function () {
@@ -154,6 +165,17 @@
                             }).done(function (data) {
                                 window.location.reload();
                             })
+                        }
+                    });
+
+                    $('a', menu).each(function () {
+                        var $this = $(this);
+                        var href = $this.attr('href');
+                        if (href.indexOf('javascript:') == 0) {
+                            $this.click(function () {
+                                actionScripts[href]();
+                            });
+                            $this.attr('href','#');
                         }
                     });
 

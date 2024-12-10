@@ -1,11 +1,12 @@
-@using DotNetNuke.Web.Mvc.Skins
+@using DotNetNuke.Web.MvcPipeline.Models
+@using DotNetNuke.Web.MvcPipeline.Skins
 @using DotNetNuke.Web.DDRMenu
-@model DotNetNuke.Framework.Models.PageModel
+@model PageModel
 
 @{
-    Model.ContentSecurityPolicy.AddFontSource(DotNetNuke.Web.Mvc.Csp.CspSourceType.Host, "https://fonts.gstatic.com");
+    Model.ContentSecurityPolicy.FontSource.AddHost("https://fonts.gstatic.com");
     // Model.ContentSecurityPolicy.AddStyleSource(DotNetNuke.Web.Mvc.Csp.CspSourceType.Inline);
-    Model.ContentSecurityPolicy.AddScriptSource(DotNetNuke.Web.Mvc.Csp.CspSourceType.StrictDynamic);
+    Model.ContentSecurityPolicy.ScriptSource.AddStrictDynamic();
     // Model.ContentSecurityPolicy.AddScriptSource(DotNetNuke.Web.Mvc.Csp.CspSourceType.Inline); // for backward compatibility
 }
 

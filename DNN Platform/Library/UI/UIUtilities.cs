@@ -72,7 +72,7 @@ namespace DotNetNuke.UI
             return IsLegacyUI(moduleId, key, portalId);
         }
 
-        internal static string GetControlKey()
+        public static string GetControlKey()
         {
             HttpRequest request = HttpContext.Current.Request;
 
@@ -85,7 +85,7 @@ namespace DotNetNuke.UI
             return key;
         }
 
-        internal static int GetModuleId(string key)
+        public static int GetModuleId(string key)
         {
             HttpRequest request = HttpContext.Current.Request;
 
@@ -103,7 +103,7 @@ namespace DotNetNuke.UI
             return moduleId;
         }
 
-        internal static string GetRenderMode()
+        public static string GetRenderMode()
         {
             HttpRequest request = HttpContext.Current.Request;
 
@@ -116,7 +116,7 @@ namespace DotNetNuke.UI
             return renderMode;
         }
 
-        internal static ModuleInfo GetSlaveModule(int moduleId, string key, int tabId)
+        public static ModuleInfo GetSlaveModule(int moduleId, string key, int tabId)
         {
             HttpRequest request = HttpContext.Current.Request;
 

@@ -155,7 +155,7 @@ namespace DotNetNuke.Web.Mvc.Routing
                 defaults: new { action = "Index", tabid = UrlParameter.Optional, language= UrlParameter.Optional },
                 namespaces: new string[] { "DotNetNuke.Framework.Controllers" });
             */
-
+            /*
             var route = new Route("mvc/{controller}/{action}/{tabid}/{language}", new DnnMvcPageRouteHandler())
             {
                 Defaults = CreateRouteValueDictionaryUncached(new { action = "Index", tabid = UrlParameter.Optional, language = UrlParameter.Optional }),
@@ -167,6 +167,7 @@ namespace DotNetNuke.Web.Mvc.Routing
             route.SetNameSpaces(new string[] { "DotNetNuke.Framework.Controllers" });
             route.SetName("Default");
             this.routes.Add(route);
+            */
         }
 
         private void LocateServicesAndMapRoutes()

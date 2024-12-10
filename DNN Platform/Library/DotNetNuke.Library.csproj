@@ -275,87 +275,8 @@
     <Compile Include="ExtensionPoints\PanelTabExtensionControl.cs" />
     <Compile Include="Framework\JavaScriptLibraries\MvcJavaScript.cs" />
     <Compile Include="Modules\NavigationEventArgs.cs" />
-    <Compile Include="Mvc\Containers\SkinHelpers.Content.cs" />
-    <Compile Include="Mvc\Containers\SkinHelpers.Title.cs" />
-    <Compile Include="Mvc\Controllers\DnnPageController.cs" />
-    <Compile Include="Mvc\Controllers\IMvcController.cs" />
-    <Compile Include="Mvc\Csp\BaseCspContributor.cs" />
-    <Compile Include="Mvc\Csp\ContentSecurityPolicy.cs" />
-    <Compile Include="Mvc\Csp\CspContributor.cs" />
-    <Compile Include="Mvc\Csp\CspDirectiveNameMapper.cs" />
-    <Compile Include="Mvc\Csp\CspDirectiveType.cs" />
-    <Compile Include="Mvc\Csp\CspPolicyExample.cs" />
-    <Compile Include="Mvc\Csp\CspSource.cs" />
-    <Compile Include="Mvc\Csp\CspSourceType.cs" />
-    <Compile Include="Mvc\Csp\CspSourceTypeNameMapper.cs" />
-    <Compile Include="Mvc\Csp\DocumentCspContributor.cs" />
-    <Compile Include="Mvc\Csp\IContentSecurityPolicy.cs" />
-    <Compile Include="Mvc\Csp\ReportingCspContributor.cs" />
-    <Compile Include="Mvc\Csp\SourceCspContributor.cs" />
-    <Compile Include="Mvc\Models\Exceptions\AccesDeniedException.cs" />
-    <Compile Include="Mvc\Models\Exceptions\DisabledPageException.cs" />
-    <Compile Include="Mvc\Models\ModuleMessageModel.cs" />
-    <Compile Include="Mvc\Models\Exceptions\MvcPageException.cs" />
-    <Compile Include="Mvc\Models\Exceptions\NotFoundException.cs" />
-    <Compile Include="Mvc\PermissionTriStateHelper.cs" />
-    <Compile Include="Mvc\Security\Controllers\ModulePermissionsGridController.cs" />
-    <Compile Include="Mvc\Security\Controllers\PermissionModel.cs" />
-    <Compile Include="Mvc\Security\Controllers\PermissionsGridController.cs" />
-    <Compile Include="Mvc\Models\ModuleActionsModel.cs" />
-    <Compile Include="Mvc\Models\ModuleHostModel.cs" />
-    <Compile Include="Mvc\Models\ContainerModel.cs" />
-    <Compile Include="Mvc\Models\PaneModel.cs" />
-    <Compile Include="Mvc\Models\SkinModel.cs" />
-    <Compile Include="Mvc\Models\PageModel.cs" />
-    <Compile Include="Mvc\Modules\ModuleHelpers.DnnLabel.cs" />
-    <Compile Include="Mvc\Modules\ModuleHelpers.TextEditor.cs" />
     <Compile Include="Mvc\MvcClientAPI.cs" />
     <Compile Include="Mvc\MvcUtils.cs" />
-    <Compile Include="Mvc\HtmlHelpers.cs" />
-    <Compile Include="Mvc\Security\Controllers\RoleModel.cs" />
-    <Compile Include="Mvc\Security\Controllers\UserModel.cs" />
-    <Compile Include="Mvc\Security\Models\ModulePermissionsGridViewModel.cs" />
-    <Compile Include="Mvc\Security\Models\PermissionsGridViewModel.cs" />
-    <Compile Include="Mvc\Security\Models\PermissionsUpdateModel.cs" />
-    <Compile Include="Mvc\Security\Models\PermissionTriStateModel.cs" />
-    <Compile Include="Mvc\Security\Models\PermissionUpdateModel.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.BreadCrumb.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.ControlPanel.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Copyright.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.CurrentDate.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.DnnCssExclude.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.DnnCssInclude.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.DnnJsExclude.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.DnnJsInclude.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.DnnLink.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.DotNetNuke.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Help.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.HostName.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.JavaScriptLibraryInclude.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.jQuery.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Language.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.LeftMenu.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Links.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.LinkToFullSite.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.LinkToMobileSite.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.LinkToTabletSite.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Login.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Logo.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Search.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.SkinPartial.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Meta.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.ModuleMessage.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Pane.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Privacy.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Styles.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Tags.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Terms.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Text.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.Toast.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.TreeViewMenu.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.User.cs" />
-    <Compile Include="Mvc\Skins\SkinHelpers.UserAndLogin.cs" />
     <Compile Include="Obsolete\EventLogController.cs" />
     <Compile Include="Obsolete\HostController.cs" />
     <Compile Include="Obsolete\LogInfo.cs" />
@@ -2019,6 +1940,10 @@
       <Project>{6928a9b1-f88a-4581-a132-d3eb38669bb0}</Project>
       <Name>DotNetNuke.Abstractions</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DotNetNuke.ContentSecurityPolicy\DotNetNuke.ContentSecurityPolicy.csproj">
+      <Project>{fa9db2bc-a757-48f7-9178-248b8b28ecf5}</Project>
+      <Name>DotNetNuke.ContentSecurityPolicy</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotNetNuke.DependencyInjection\DotNetNuke.DependencyInjection.csproj">
       <Project>{0fca217a-5f9a-4f5b-a31b-86d64ae65198}</Project>
       <Name>DotNetNuke.DependencyInjection</Name>
@@ -2047,9 +1972,6 @@
   <ItemGroup>
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Mvc\Security\Scripts\PermissionsGrid.js" />
   </ItemGroup>
   <PropertyGroup>
     <RootDirectory>$(MSBuildProjectDirectory)\..\..</RootDirectory>

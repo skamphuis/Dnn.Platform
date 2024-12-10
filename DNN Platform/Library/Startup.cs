@@ -13,6 +13,7 @@ namespace DotNetNuke
     using DotNetNuke.Application;
     using DotNetNuke.Common;
     using DotNetNuke.Common.Internal;
+    using DotNetNuke.ContentSecurityPolicy;
     using DotNetNuke.DependencyInjection;
     using DotNetNuke.Entities.Controllers;
     using DotNetNuke.Entities.Modules.Settings;
@@ -22,7 +23,6 @@ namespace DotNetNuke
     using DotNetNuke.Services.Mail.OAuth;
     using DotNetNuke.UI.Modules;
     using DotNetNuke.UI.Modules.Html5;
-    using DotNetNuke.Web.Mvc.Csp;
     using Microsoft.Extensions.DependencyInjection;
 
     /// <inheritdoc />
@@ -58,7 +58,7 @@ namespace DotNetNuke
             services.AddTransient<ISmtpOAuthController, SmtpOAuthController>();
             SmtpOAuthController.RegisterOAuthProviders(services);
 
-            services.AddScoped<IContentSecurityPolicy, ContentSecurityPolicy>();
+            services.AddScoped<IContentSecurityPolicy, ContentSecurityPolicy.ContentSecurityPolicy>();
         }
     }
 }

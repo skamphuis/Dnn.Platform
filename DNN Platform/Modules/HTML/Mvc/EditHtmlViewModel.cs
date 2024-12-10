@@ -8,6 +8,7 @@ namespace DotNetNuke.Modules.Html.Mvc
     using System.Web.Mvc;
 
     using DotNetNuke.Web.Mvc.Page;
+    using DotNetNuke.Web.MvcPipeline.Models;
 
     using static DotNetNuke.Modules.Html.Mvc.DNN_HTMLController;
 
