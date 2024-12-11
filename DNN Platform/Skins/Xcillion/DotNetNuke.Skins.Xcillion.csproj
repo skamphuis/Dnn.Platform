@@ -179,7 +179,6 @@
     <Content Include="Skin\Includes\social-linkedin.png" />
     <Content Include="Skin\Includes\social-sprite.png" />
     <Content Include="Skin\Includes\social-twitter.png" />
-    <Content Include="Skin\Inner-mvc.ascx" />
     <Content Include="Skin\Inner.ascx" />
     <Content Include="Skin\Inner.jpg" />
     <Content Include="Skin\Js\jquery.smartmenus.bootstrap.js" />
@@ -240,7 +239,6 @@
     <Content Include="Skin\Views\web.config" />
     <Content Include="Skin\Views\Common\AddFiles.cshtml" />
     <Content Include="Skin\Views\Home.cshtml" />
-    <Content Include="Skin\Views\Inner-mvc.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

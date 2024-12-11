@@ -60,6 +60,10 @@
     <Reference Include="ClientDependency.Core.Mvc">
       <HintPath>..\..\Refs\ClientDependency.Core.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.1.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -87,6 +91,9 @@
   <ItemGroup>
     <Compile Include="Containers\SkinHelpers.Content.cs" />
     <Compile Include="Containers\SkinHelpers.Title.cs" />
+    <Compile Include="Controllers\CspController.cs" />
+    <Compile Include="Controllers\CSPReport.cs" />
+    <Compile Include="Controllers\CSPReportDetail.cs" />
     <Compile Include="Controllers\DnnPageController.cs" />
     <Compile Include="Controllers\IMvcController.cs" />
     <Compile Include="Controllers\ModuleControllerBase.cs" />

@@ -212,7 +212,6 @@ namespace DotNetNuke.Website.Controllers
                     if (!UIUtilities.IsLegacyUI(this.ModuleContext.ModuleId, action.ControlKey, this.ModuleContext.PortalId) && action.Url.Contains("ctl"))
                     {
                         action.ClientScript = UrlUtils.PopUpUrl(action.Url, null, this.PortalSettings, true, false);
-                        this.actionScripts.Add(action.Url, action.ClientScript);
                     }
                 }
             }
@@ -281,6 +280,19 @@ namespace DotNetNuke.Website.Controllers
                                         this.validIDs.Add(action.ID);
                                     }
                                 }
+                            }
+
+                            if (string.IsNullOrEmpty(action.ClientScript) && !string.IsNullOrEmpty(action.Url) && action.Url.StartsWith("javascript:"))
+                            {
+                                if (!UIUtilities.IsLegacyUI(this.ModuleContext.ModuleId, action.ControlKey, this.ModuleContext.PortalId))
+                                {
+                                    action.ClientScript = UrlUtils.PopUpUrl(action.Url, null, this.PortalSettings, true, false);
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(action.ClientScript) && !string.IsNullOrEmpty(action.Url))
+                            {
+                                this.actionScripts.Add(action.Url, action.ClientScript);
                             }
                         }
 

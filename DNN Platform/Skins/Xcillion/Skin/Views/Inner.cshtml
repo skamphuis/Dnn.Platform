@@ -4,10 +4,9 @@
 @model PageModel
 
 @{
-    Model.ContentSecurityPolicy.FontSource.AddHost("https://fonts.gstatic.com");
-    // Model.ContentSecurityPolicy.AddStyleSource(DotNetNuke.Web.Mvc.Csp.CspSourceType.Inline);
-    Model.ContentSecurityPolicy.ScriptSource.AddStrictDynamic();
-    // Model.ContentSecurityPolicy.AddScriptSource(DotNetNuke.Web.Mvc.Csp.CspSourceType.Inline); // for backward compatibility
+    // Model.ContentSecurityPolicy.FontSource.AddHost("https://fonts.gstatic.com");
+    // Model.ContentSecurityPolicy.ScriptSource.AddStrictDynamic();
+    Model.ContentSecurityPolicy.AddReportUri(this.Request.Url.Scheme+"://"+this.Request.Url.Host+ "/mvc/Csp/Report");
 }
 
 @section metas {
@@ -28,7 +27,7 @@
                 <div class="col-md-6">
                     <div id="search-top" class="pull-right small-screens hidden-sm hidden-md hidden-lg">
                         @*<dnn:SEARCH ID="dnnSearch2" runat="server" ShowSite="false" ShowWeb="false" EnableTheming="true" Submit="Search" CssClass="SearchButton" />*@
-                        @Html.Search(id: "dnnSearch2", showSite: false, showWeb: false, submit: "Search", cssClass: "SearchButton")
+                        @*@Html.Search(id: "dnnSearch2", showSite: false, showWeb: false, submit: "Search", cssClass: "SearchButton")*@
                     </div>
                 </div>
             </div>
@@ -40,7 +39,7 @@
                     </div>
                     <div class="search hidden-xs">
                         @*<dnn:SEARCH ID="dnnSearch" runat="server" ShowSite="false" ShowWeb="false" EnableTheming="true" Submit="Search" CssClass="SearchButton" />*@
-                        @Html.Search(id: "dnnSearch", showSite: false, showWeb: false, submit: "Search", cssClass: "SearchButton")
+                        @*@Html.Search(id: "dnnSearch", showSite: false, showWeb: false, submit: "Search", cssClass: "SearchButton")*@
                     </div>
                     <!-- search action for Search function on small devices -->
                     <a id="search-action" aria-label="Search" role="search"></a>
@@ -163,10 +162,9 @@
 @Html.SkinPartial("Common/AddFiles")
 
 @{
+    // Context.Response.AddHeader("Content-Security-Policy-Report-Only", Model.ContentSecurityPolicy.GeneratePolicy());
     Context.Response.AddHeader("Content-Security-Policy", Model.ContentSecurityPolicy.GeneratePolicy());
-    // Context.Response.AddHeader("Content-Security-Policy", string.Format("default-src 'self';base-uri 'self';form-action 'self';object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline' ;font-src 'self' https://fonts.gstatic.com; script-src 'strict-dynamic' 'unsafe-inline' 'nonce-{0}' ;", Model.Nonce));
     Context.Response.AddHeader("X-XSS-Protection", "1; mode=block");
-    //Context.Response.AddHeader("X-Frame-Options", "SAMEORIGIN");
     Context.Response.AddHeader("X-Content-Type-Options", "nosniff");
     Context.Response.AddHeader("Referrer-Policy", "same-origin");
     Context.Response.AddHeader("Permissions-Policy", "camera=self");

@@ -76,9 +76,15 @@ namespace DotNetNuke.Framework.Controllers
             this.ContentSecurityPolicy.ImgSource.AddSelf();
             this.ContentSecurityPolicy.FontSource.AddSelf();
             this.ContentSecurityPolicy.StyleSource.AddSelf();
+            this.ContentSecurityPolicy.FrameSource.AddSelf();
             this.ContentSecurityPolicy.ObjectSource.AddNone();
             this.ContentSecurityPolicy.BaseUriSource.AddNone();
             this.ContentSecurityPolicy.ScriptSource.AddNonce(this.ContentSecurityPolicy.Nonce);
+
+            if (this.Request.IsAuthenticated)
+            {
+                this.ContentSecurityPolicy.FrameSource.AddHost("https://dnndocs.com").AddHost("https://docs.dnncommunity.org");
+            }
 
             // this.ContentSecurityPolicy.AddScriptSource(CspSourceType.Scheme, "http:");
             // this.ContentSecurityPolicy.AddScriptSource(CspSourceType.Scheme, "https:");
@@ -101,9 +107,8 @@ namespace DotNetNuke.Framework.Controllers
             if (PortalSettings.Current.UserId > 0)
             {
                 MvcContentEditorManager.CreateManager(this);
+                ServicesFramework.Instance.RequestAjaxScriptSupport();
             }
-
-            ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
 
             if (ServicesFrameworkInternal.Instance.IsAjaxScriptSupportRequired)
             {
@@ -112,8 +117,8 @@ namespace DotNetNuke.Framework.Controllers
 
             var antiForgery = string.Empty;
 
-            // ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
-            if (ServicesFrameworkInternal.Instance.IsAjaxScriptSupportRequired)
+            ServicesFramework.Instance.RequestAjaxAntiForgerySupport(); // add also jquery
+            if (ServicesFrameworkInternal.Instance.IsAjaxAntiForgerySupportRequired)
             {
                 antiForgery = AntiForgery.GetHtml().ToHtmlString();
             }
