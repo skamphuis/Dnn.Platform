@@ -21,7 +21,7 @@ namespace DotNetNuke.Web.MvcPipeline.Skins
 
     public static partial class SkinExtensions
     {
-        public static IHtmlString Pane(this HtmlHelper<PageModel> htmlHelper, string paneName)
+        public static IHtmlString Pane(this HtmlHelper<PageModel> htmlHelper, string id, string cssClass = "")
         {
             var model = htmlHelper.ViewData.Model;
             if (model == null)
@@ -29,16 +29,27 @@ namespace DotNetNuke.Web.MvcPipeline.Skins
                 throw new InvalidOperationException("The model need to be present.");
             }
 
+            var editDiv = new TagBuilder("div");
+
+            // editDiv.GenerateId("dnn_" + id + "_SyncPanel");
             var paneDiv = new TagBuilder("div");
-            paneDiv.GenerateId("dnn_" + paneName);
             paneDiv.AddCssClass("dnnPane");
-
-            // paneDiv.AddCssClass(model.Skin.PaneCssClass);
-            paneDiv.Attributes["data-name"] = paneName;
-
-            if (model.Skin.Panes.ContainsKey(paneName))
+            paneDiv.GenerateId("dnn_" + id);
+            if (model.IsEditMode)
             {
-                var pane = model.Skin.Panes[paneName];
+                editDiv.AddCssClass(cssClass);
+
+                // paneDiv.AddCssClass(model.Skin.PaneCssClass);
+                paneDiv.Attributes["data-name"] = id;
+            }
+            else
+            {
+                paneDiv.AddCssClass(cssClass);
+            }
+
+            if (model.Skin.Panes.ContainsKey(id))
+            {
+                var pane = model.Skin.Panes[id];
                 paneDiv.AddCssClass(pane.CssClass);
                 foreach (var container in pane.Containers)
                 {
@@ -77,7 +88,8 @@ namespace DotNetNuke.Web.MvcPipeline.Skins
 
             if (model.IsEditMode)
             {
-                return MvcHtmlString.Create(paneDiv.ToString());
+                editDiv.InnerHtml += paneDiv.ToString();
+                return MvcHtmlString.Create(editDiv.ToString());
             }
             else
             {

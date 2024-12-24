@@ -245,6 +245,10 @@
       <Project>{03e3afa5-ddc9-48fb-a839-ad4282ce237e}</Project>
       <Name>DotNetNuke.Web.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\DotNetNuke.Web.MvcPipeline\DotNetNuke.Web.MvcPipeline.csproj">
+      <Project>{35fc80b3-b89a-46fd-b8b3-bd2071b20d9c}</Project>
+      <Name>DotNetNuke.Web.MvcPipeline</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Library\DotNetNuke.Library.csproj">
       <Project>{6b29aded-7b56-4484-bea5-c0e09079535b}</Project>
       <Name>DotNetNuke.Library</Name>

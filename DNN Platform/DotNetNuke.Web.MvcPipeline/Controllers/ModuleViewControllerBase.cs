@@ -2,12 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information
 
-namespace DotNetNuke.Modules.Html
+namespace DotNetNuke.Web.MvcPipeline.Controllers
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
+    using System.ComponentModel;
     using System.IO;
-    using System.Web.UI;
+    using System.Linq;
+    using System.Web;
+    using System.Web.Mvc;
 
     using DotNetNuke.Common;
     using DotNetNuke.Entities.Modules;
@@ -15,35 +19,77 @@ namespace DotNetNuke.Modules.Html
     using DotNetNuke.Entities.Portals;
     using DotNetNuke.Entities.Users;
     using DotNetNuke.Instrumentation;
+    using DotNetNuke.Mvc;
     using DotNetNuke.Services.Localization;
     using DotNetNuke.UI.Modules;
+    using DotNetNuke.Web.MvcPipeline.Models;
+    using DotNetNuke.Web.MvcPipeline.Routing;
 
-    public class ModuleControlBase : IModuleControl, IDisposable
+    public abstract class ModuleViewControllerBase : Controller, IMvcController
     {
+        private ModuleInfo activeModule;
         /*
-        protected static readonly Regex FileInfoRegex = new Regex(
-             @"\.([a-z]{2,3}\-[0-9A-Z]{2,4}(-[A-Z]{2})?)(\.(Host|Portal-\d+))?\.resx$",
-             RegexOptions.IgnoreCase | RegexOptions.Compiled,
-             TimeSpan.FromSeconds(1));
-        */
-
         private readonly ILog tracelLogger = LoggerSource.Instance.GetLogger("DNN.Trace");
         private readonly Lazy<ServiceScopeContainer> serviceScopeContainer = new Lazy<ServiceScopeContainer>(ServiceScopeContainer.GetRequestOrCreateScope);
         private string localResourceFile;
         private ModuleInstanceContext moduleContext;
+        private DesktopModuleInfo desktopModule;
+        */
 
-        /*
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Control ContainerControl
+        public ModuleViewControllerBase()
+        {
+        }
+
+        public PortalSettings PortalSettings
         {
             get
             {
-                return Globals.FindControlRecursive(this, "ctr" + this.ModuleId);
+                return PortalController.Instance.GetCurrentPortalSettings();
             }
         }
-        */
 
+        /// <summary>Gets userInfo for the current user.</summary>
+        public UserInfo UserInfo
+        {
+            get { return this.PortalSettings.UserInfo; }
+        }
+
+        public ModuleInfo ActiveModule
+        {
+            get { return this.activeModule; }
+        }
+
+        [ChildActionOnly]
+        public virtual ActionResult Invoke(ControlViewModel input)
+        {
+            this.activeModule = ModuleController.Instance.GetModule(input.ModuleId, input.TabId, false);
+            if (this.activeModule.ModuleControlId != input.ModuleControlId)
+            {
+                this.activeModule = this.activeModule.Clone();
+                this.activeModule.ContainerPath = input.ContainerPath;
+                this.activeModule.ContainerSrc = input.ContainerSrc;
+                this.activeModule.ModuleControlId = input.ModuleControlId;
+                this.activeModule.PaneName = input.PanaName;
+                this.activeModule.IconFile = input.IconFile;
+            }
+
+            var model = this.ViewModel(this.activeModule);
+            return this.PartialView(this.activeModule, model);
+        }
+
+        protected abstract object ViewModel(ModuleInfo module);
+
+        protected ActionResult PartialView(ModuleInfo module, object model)
+        {
+            return this.View(MvcUtils.GetControlViewName(module), model);
+        }
+
+        protected ActionResult PartialView(ModuleInfo module, string viewName, object model)
+        {
+            return this.View(MvcUtils.GetControlViewName(module, viewName), model);
+        }
+
+        /*
         public bool IsHostMenu
         {
             get
@@ -129,21 +175,15 @@ namespace DotNetNuke.Modules.Html
             }
         }
 
-        /// <summary>Gets the underlying base control for this ModuleControl.</summary>
+        /// <summary>Gets the Path for this control (used primarily for UserControls).</summary>
         /// <returns>A String.</returns>
-        public Control Control
+        public string ControlPath
         {
             get
             {
-                return null;
+                return "/" + Path.GetDirectoryName(this.ModuleConfiguration.ModuleControl.ControlSrc);
             }
         }
-
-        public string ID { get; set; }
-
-        /// <summary>Gets or Sets the Path for this control (used primarily for UserControls).</summary>
-        /// <returns>A String.</returns>
-        public string ControlPath { get; set; }
 
         /// <summary>Gets the Name for this control.</summary>
         /// <returns>A String.</returns>
@@ -163,57 +203,28 @@ namespace DotNetNuke.Modules.Html
             {
                 if (this.moduleContext == null)
                 {
-                    this.moduleContext = new ModuleInstanceContext(this);
+                    this.moduleContext = new ModuleInstanceContext()
+                    {
+                        Configuration = this.ActiveModule,
+                    };
                 }
 
                 return this.moduleContext;
             }
         }
 
-        /*
-        // CONVERSION: Remove obsoleted methods (FYI some core modules use these, such as Links)
-
-        /// <summary>
-        ///   Gets the CacheDirectory property is used to return the location of the "Cache"
-        ///   Directory for the Module.
-        /// </summary>
-        [Obsolete("Deprecated in DotNetNuke 7.0.0. Please use ModuleController.CacheDirectory(). Scheduled removal in v11.0.0.")]
-        public string CacheDirectory
+        public DesktopModuleInfo DesktopModule
         {
             get
             {
-                return PortalController.Instance.GetCurrentPortalSettings().HomeDirectoryMapPath + "Cache";
-            }
-        }
+                if (this.desktopModule == null)
+                {
+                    this.desktopModule = DesktopModuleControllerAdapter.Instance.GetDesktopModule(this.ActiveModule.DesktopModuleID, this.ActiveModule.PortalID);
+                }
 
-        /// <summary>
-        ///   Gets the CacheFileName property is used to store the FileName for this Module's
-        ///   Cache.
-        /// </summary>
-        [Obsolete("Deprecated in DotNetNuke 7.0.0. Please use ModuleController.CacheFileName(TabModuleID). Scheduled removal in v11.0.0.")]
-        public string CacheFileName
-        {
-            get
-            {
-                string strCacheKey = "TabModule:";
-                strCacheKey += this.TabModuleId + ":";
-                strCacheKey += Thread.CurrentThread.CurrentUICulture.ToString();
-                return PortalController.Instance.GetCurrentPortalSettings().HomeDirectoryMapPath + "Cache" + "\\" + Globals.CleanFileName(strCacheKey) + ".resources";
+                return this.desktopModule;
             }
         }
-
-        [Obsolete("Deprecated in DotNetNuke 7.0.0. Please use ModuleController.CacheKey(TabModuleID). Scheduled removal in v11.0.0.")]
-        public string CacheKey
-        {
-            get
-            {
-                string strCacheKey = "TabModule:";
-                strCacheKey += this.TabModuleId + ":";
-                strCacheKey += Thread.CurrentThread.CurrentUICulture.ToString();
-                return strCacheKey;
-            }
-        }
-        */
 
         public ModuleActionCollection Actions
         {
@@ -277,6 +288,14 @@ namespace DotNetNuke.Modules.Html
             set
             {
                 this.ModuleContext.ModuleId = value;
+            }
+        }
+
+        public string ID
+        {
+            get
+            {
+                return Path.GetFileName(this.ModuleConfiguration.ModuleControl.ControlSrc);
             }
         }
 
@@ -349,82 +368,14 @@ namespace DotNetNuke.Modules.Html
             return this.ModuleContext.GetNextActionID();
         }
 
-        /// <inheritdoc />
-        public void Dispose()
+        /// <inheritdoc/>
+        public override void Dispose()
         {
-            // base.Dispose();
+            base.Dispose();
             if (this.serviceScopeContainer.IsValueCreated)
             {
                 this.serviceScopeContainer.Value.Dispose();
             }
-        }
-
-        /*
-        [DnnDeprecated(7, 0, 0, "Please use ModuleController.CacheFileName(TabModuleID)", RemovalVersion = 11)]
-        public partial string GetCacheFileName(int tabModuleId)
-        {
-            string strCacheKey = "TabModule:";
-            strCacheKey += tabModuleId + ":";
-            strCacheKey += Thread.CurrentThread.CurrentUICulture.ToString();
-            return PortalController.Instance.GetCurrentPortalSettings().HomeDirectoryMapPath + "Cache" + "\\" + Globals.CleanFileName(strCacheKey) + ".resources";
-        }
-
-        [DnnDeprecated(7, 0, 0, "Please use ModuleController.CacheKey(TabModuleID)", RemovalVersion = 11)]
-        public partial string GetCacheKey(int tabModuleId)
-        {
-            string strCacheKey = "TabModule:";
-            strCacheKey += tabModuleId + ":";
-            strCacheKey += Thread.CurrentThread.CurrentUICulture.ToString();
-            return strCacheKey;
-        }
-
-        [DnnDeprecated(7, 0, 0, "Please use ModuleController.SynchronizeModule(ModuleId)", RemovalVersion = 11)]
-        public partial void SynchronizeModule()
-        {
-            ModuleController.SynchronizeModule(this.ModuleId);
-        }
-        */
-        protected void OnInit()
-        {
-            if (this.tracelLogger.IsDebugEnabled)
-            {
-                this.tracelLogger.Debug($"PortalModuleBase.OnInit Start (TabId:{this.PortalSettings.ActiveTab.TabID},ModuleId:{this.ModuleId}): {this.GetType()}");
-            }
-
-            // base.OnInit(e);
-            if (this.tracelLogger.IsDebugEnabled)
-            {
-                this.tracelLogger.Debug($"PortalModuleBase.OnInit End (TabId:{this.PortalSettings.ActiveTab.TabID},ModuleId:{this.ModuleId}): {this.GetType()}");
-            }
-        }
-
-        protected void OnLoad()
-        {
-            if (this.tracelLogger.IsDebugEnabled)
-            {
-                this.tracelLogger.Debug($"PortalModuleBase.OnLoad Start (TabId:{this.PortalSettings.ActiveTab.TabID},ModuleId:{this.ModuleId}): {this.GetType()}");
-            }
-
-            // base.OnLoad(e);
-            if (this.tracelLogger.IsDebugEnabled)
-            {
-                this.tracelLogger.Debug($"PortalModuleBase.OnLoad End (TabId:{this.PortalSettings.ActiveTab.TabID},ModuleId:{this.ModuleId}): {this.GetType()}");
-            }
-        }
-
-        /// <summary>
-        /// Helper method that can be used to add an ActionEventHandler to the Skin for this
-        /// Module Control.
-        /// </summary>
-        protected void AddActionHandler(ActionEventHandler e)
-        {
-            /*
-            UI.Skins.Skin parentSkin = UI.Skins.Skin.GetParentSkin(this);
-            if (parentSkin != null)
-            {
-                parentSkin.RegisterModuleActionEvent(this.ModuleId, e);
-            }
-            */
         }
 
         protected string LocalizeString(string key)
@@ -436,5 +387,6 @@ namespace DotNetNuke.Modules.Html
         {
             return Localization.GetSafeJSString(key, this.LocalResourceFile);
         }
+        */
     }
 }

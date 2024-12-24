@@ -68,6 +68,14 @@ namespace DotNetNuke.Framework.Controllers
 
         protected IContentSecurityPolicy ContentSecurityPolicy { get; }
 
+        public static void RegisterAjaxScript(ControllerContext context)
+        {
+            if (ServicesFrameworkInternal.Instance.IsAjaxScriptSupportRequired)
+            {
+                ServicesFrameworkInternal.Instance.RegisterAjaxScript(context);
+            }
+        }
+
         public ActionResult Page(int tabid, string language)
         {
             this.HttpContext.Items.Add("CSP-NONCE", this.ContentSecurityPolicy.Nonce);
@@ -80,6 +88,7 @@ namespace DotNetNuke.Framework.Controllers
             this.ContentSecurityPolicy.ObjectSource.AddNone();
             this.ContentSecurityPolicy.BaseUriSource.AddNone();
             this.ContentSecurityPolicy.ScriptSource.AddNonce(this.ContentSecurityPolicy.Nonce);
+            this.ContentSecurityPolicy.AddReportUri(this.Request.Url.Scheme + "://" + this.Request.Url.Host + "/mvc/Csp/Report");
 
             if (this.Request.IsAuthenticated)
             {
@@ -91,6 +100,8 @@ namespace DotNetNuke.Framework.Controllers
 
             // JavaScriptLibraries.JavaScript.RequestRegistration(CommonJs.jQuery);
             // ServicesFrameworkInternal.Instance.RegisterAjaxScript(this.ControllerContext);
+
+            /*
             var dnncoreFilePath = this.HttpContext.IsDebuggingEnabled
                    ? "~/js/Debug/dnncore.js"
                    : "~/js/dnncore.js";
@@ -101,28 +112,27 @@ namespace DotNetNuke.Framework.Controllers
             };
 
             MvcClientResourceManager.RegisterScript(this.ControllerContext, dnncoreFilePath, htmlAttributes: htmlAttributes);
+            */
 
             var user = this.PortalSettings.UserInfo;
 
             if (PortalSettings.Current.UserId > 0)
             {
                 MvcContentEditorManager.CreateManager(this);
-                ServicesFramework.Instance.RequestAjaxScriptSupport();
-            }
 
-            if (ServicesFrameworkInternal.Instance.IsAjaxScriptSupportRequired)
-            {
-                ServicesFrameworkInternal.Instance.RegisterAjaxScript(this.ControllerContext);
+                // ServicesFramework.Instance.RequestAjaxScriptSupport();
             }
 
             var antiForgery = string.Empty;
-
+            /*
             ServicesFramework.Instance.RequestAjaxAntiForgerySupport(); // add also jquery
             if (ServicesFrameworkInternal.Instance.IsAjaxAntiForgerySupportRequired)
             {
                 antiForgery = AntiForgery.GetHtml().ToHtmlString();
             }
+            */
 
+            antiForgery = AntiForgery.GetHtml().ToHtmlString();
             var renderer = this.ControllerContext.GetLoader();
 
             // renderer.RegisterDependency("/Resources/libraries/jQuery/03_07_01/jquery.js", ClientDependency.Core.ClientDependencyType.Javascript);
@@ -276,9 +286,8 @@ namespace DotNetNuke.Framework.Controllers
             }
 
             // add CSS links
-            MvcClientResourceManager.RegisterDefaultStylesheet(this.ControllerContext, string.Concat(Globals.ApplicationPath, "/Resources/Shared/stylesheets/dnndefault/7.0.0/default.css"));
-            MvcClientResourceManager.RegisterIEStylesheet(this.ControllerContext, string.Concat(Globals.HostPath, "ie.css"));
-
+            // MvcClientResourceManager.RegisterDefaultStylesheet(this.ControllerContext, string.Concat(Globals.ApplicationPath, "/Resources/Shared/stylesheets/dnndefault/7.0.0/default.css"));
+            // MvcClientResourceManager.RegisterIEStylesheet(this.ControllerContext, string.Concat(Globals.HostPath, "ie.css"));
             MvcClientResourceManager.RegisterStyleSheet(this.ControllerContext, string.Concat(ctlSkin.SkinPath, "skin.css"), FileOrder.Css.SkinCss);
             MvcClientResourceManager.RegisterStyleSheet(this.ControllerContext, ctlSkin.SkinSrc.Replace(".ascx", ".css"), FileOrder.Css.SpecificSkinCss);
 

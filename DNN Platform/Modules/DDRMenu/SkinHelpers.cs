@@ -16,13 +16,15 @@ namespace DotNetNuke.Web.DDRMenu
     using DotNetNuke.Web.DDRMenu;
     using DotNetNuke.Web.DDRMenu.Localisation;
     using DotNetNuke.Web.DDRMenu.TemplateEngine;
+    using DotNetNuke.Web.MvcPipeline.Models;
 
     public static class SkinHelpers
     {
         public static IHtmlString DDRMenu(
-                                        this System.Web.Mvc.HtmlHelper htmlHelper,
+                                        this System.Web.Mvc.HtmlHelper<PageModel> htmlHelper,
                                         string clientID,
                                         string menuStyle,
+                                        string cssClass = "",
                                         string nodeXmlPath = "",
                                         string nodeSelector = "*",
                                         bool includeContext = false,
@@ -34,7 +36,7 @@ namespace DotNetNuke.Web.DDRMenu
                                         List<TemplateArgument> templateArguments = null)
         {
             MvcMenuBase menu;
-            menu = MvcMenuBase.Instantiate(menuStyle);
+            menu = MvcMenuBase.Instantiate(menuStyle, htmlHelper.ViewData.Model.Skin.SkinPath);
             menu.ApplySettings(
                 new Settings
                 {

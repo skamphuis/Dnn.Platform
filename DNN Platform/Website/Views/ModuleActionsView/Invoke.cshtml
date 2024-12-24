@@ -63,10 +63,13 @@
                 moduleTitle: '@Html.Raw(Json.Encode(Model.ModuleTitle))'
             });
 
+            setTimeout(() => {
+                
+            
+
             var menu = $('#moduleActions-' + moduleId);
             menu.find("#moduleActions-" + moduleId + "-Delete a").attr('href', '#');
-            menu.find("#moduleActions-" + moduleId + "-Delete a").off("click");
-
+            menu.find("#moduleActions-" + moduleId + "-Delete a").off('click');
             menu.find("#moduleActions-" + moduleId + "-Delete a").dnnConfirm({
                 text: '@Localization.GetSafeJSString(Localization.GetString("DeleteItem.Text", Localization.SharedResourceFile))',
                 yesText: '@Localization.GetSafeJSString(Localization.GetString("Yes.Text", Localization.SharedResourceFile))',
@@ -87,6 +90,7 @@
                 }
             });
 
+           
             menu.find('a').each(function () {
                 var $this = $(this);
                 var href = $this.attr('href');
@@ -97,6 +101,8 @@
                     $this.attr('href','#');
                 }
             });
+
+            }, "200");
 
             //menu.find("#moduleActions-" + moduleId + "-Delete a").click(function() {
             //    alert("del")

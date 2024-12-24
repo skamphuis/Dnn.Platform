@@ -58,28 +58,47 @@ namespace DotNetNuke.Web.MvcPipeline.Containers
 
             var moduleDiv = new TagBuilder("div");
             moduleDiv.AddCssClass(model.ModuleHost.CssClass);
-            if (model.ModuleConfiguration.ModuleControl.ControlSrc.StartsWith("DesktopModules/RazorModules"))
-            {
-                var scriptFolder = Path.GetDirectoryName(model.ModuleConfiguration.ModuleControl.ControlSrc);
-                var fileRoot = Path.GetFileNameWithoutExtension(model.ModuleConfiguration.ModuleControl.ControlSrc);
-                var srcPhysicalPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, scriptFolder, "_" + fileRoot + ".cshtml");
-                var scriptFile = Path.Combine("~/" + scriptFolder, "Views/", "_" + fileRoot + ".cshtml");
-                if (File.Exists(srcPhysicalPath))
-                {
-                    try
-                    {
-                        moduleDiv.InnerHtml += htmlHelper.Partial(scriptFile, model.ModuleConfiguration);
-                    }
-                    catch (Exception ex2)
-                    {
-                        throw new Exception($"Error : {ex2.Message} ( razor : {scriptFile}, module : {model.ModuleConfiguration.ModuleID})", ex2);
-                    }
-                }
-                else
-                {
-                    throw new Exception($"Error : Razor file dous not exist ( razor : {scriptFile}, module : {model.ModuleConfiguration.ModuleID})");
 
-                    // moduleDiv.InnerHtml += $"Error : {ex.Message} (Controller : {model.ControllerName}, Action : {model.ActionName}, module : {model.ModuleConfiguration.ModuleTitle}) {ex.StackTrace}";
+            /*
+           if (model.ModuleConfiguration.ModuleControl.ControlSrc.StartsWith("DesktopModules/RazorModules"))
+           {
+               var controlFolder = Path.GetDirectoryName(model.ModuleConfiguration.ModuleControl.ControlSrc);
+               var controlFileNameWithoutExtension = Path.GetFileNameWithoutExtension(model.ModuleConfiguration.ModuleControl.ControlSrc);
+               var srcPhysicalPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, controlFolder, "_" + controlFileNameWithoutExtension + ".cshtml");
+               var scriptFile = Path.Combine("~/" + controlFolder, "Views/", "_" + controlFileNameWithoutExtension + ".cshtml");
+               if (File.Exists(srcPhysicalPath))
+               {
+                   try
+                   {
+                       moduleDiv.InnerHtml += htmlHelper.Partial(scriptFile, model.ModuleConfiguration);
+                   }
+                   catch (Exception ex2)
+                   {
+                       throw new Exception($"Error : {ex2.Message} ( razor : {scriptFile}, module : {model.ModuleConfiguration.ModuleID})", ex2);
+                   }
+               }
+               else
+               {
+                   throw new Exception($"Error : Razor file dous not exist ( razor : {scriptFile}, module : {model.ModuleConfiguration.ModuleID})");
+
+                   // moduleDiv.InnerHtml += $"Error : {ex.Message} (Controller : {model.ControllerName}, Action : {model.ActionName}, module : {model.ModuleConfiguration.ModuleTitle}) {ex.StackTrace}";
+               }
+           }
+           */
+
+            var controlFolder = Path.GetDirectoryName(model.ModuleConfiguration.ModuleControl.ControlSrc);
+            var controlFileNameWithoutExtension = Path.GetFileNameWithoutExtension(model.ModuleConfiguration.ModuleControl.ControlSrc);
+            var srcPhysicalPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, controlFolder, "Partials", controlFileNameWithoutExtension + ".cshtml");
+            if (File.Exists(srcPhysicalPath))
+            {
+                var scriptFile = Path.Combine("~/" + controlFolder, "Partials", controlFileNameWithoutExtension + ".cshtml").Replace("\\", "/");
+                try
+                {
+                    moduleDiv.InnerHtml += htmlHelper.Partial(scriptFile, model.ModuleConfiguration);
+                }
+                catch (Exception ex2)
+                {
+                    throw new Exception($"Error : {ex2.Message} ( razor : {scriptFile}, module : {model.ModuleConfiguration.ModuleID})", ex2);
                 }
             }
             else

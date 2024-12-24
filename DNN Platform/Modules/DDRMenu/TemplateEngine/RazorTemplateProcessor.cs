@@ -40,12 +40,14 @@ namespace DotNetNuke.Web.DDRMenu.TemplateEngine
                 var resolver = new PathResolver(liveDefinition.Folder);
                 dynamic model = new ExpandoObject();
                 model.Source = source;
-                model.ControlID = DNNContext.Current.HostControl.ClientID;
+
+               // model.ControlID = DNNContext.Current.HostControl.ClientID;
                 model.Options = ConvertToJson(liveDefinition.ClientOptions);
-                model.DNNPath = resolver.Resolve("/", PathResolver.RelativeTo.Dnn);
-                model.ManifestPath = resolver.Resolve("/", PathResolver.RelativeTo.Manifest);
-                model.PortalPath = resolver.Resolve("/", PathResolver.RelativeTo.Portal);
-                model.SkinPath = resolver.Resolve("/", PathResolver.RelativeTo.Skin);
+
+                // model.DNNPath = resolver.Resolve("/", PathResolver.RelativeTo.Dnn);
+                // model.ManifestPath = resolver.Resolve("/", PathResolver.RelativeTo.Manifest);
+                // model.PortalPath = resolver.Resolve("/", PathResolver.RelativeTo.Portal);
+                // model.SkinPath = resolver.Resolve("/", PathResolver.RelativeTo.Skin);
                 var modelDictionary = model as IDictionary<string, object>;
                 liveDefinition.TemplateArguments.ForEach(a => modelDictionary.Add(a.Name, a.Value));
                 htmlWriter.Write(this.RenderTemplate(liveDefinition.TemplateVirtualPath, model));

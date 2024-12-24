@@ -7,18 +7,21 @@ namespace DotNetNuke.Web.MvcPipeline
     using System;
     using System.IO;
     using System.Web;
+    using System.Web.Helpers;
     using System.Web.Mvc;
     using System.Web.Mvc.Html;
 
     using DotNetNuke.Common;
     using DotNetNuke.Common.Utilities;
     using DotNetNuke.Entities.Modules;
+    using DotNetNuke.Framework;
     using DotNetNuke.Framework.JavaScriptLibraries;
 
     // using DotNetNuke.Framework.Models;
     using DotNetNuke.Mvc;
     using DotNetNuke.UI.Modules;
     using DotNetNuke.Web.Client.ClientResourceManagement;
+    using DotNetNuke.Web.MvcPipeline.Models;
 
     public static partial class HtmlHelpers
     {
@@ -31,7 +34,34 @@ namespace DotNetNuke.Web.MvcPipeline
         {
             try
             {
-                return htmlHelper.Action("Invoke", MvcUtils.GetControlControllerName(controlSrc), model);
+                return htmlHelper.Action(
+                    "Invoke",
+                    MvcUtils.GetControlControllerName(controlSrc),
+                    model);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"{ex.Message} - {MvcUtils.GetControlControllerName(controlSrc)} - Invoke", ex);
+            }
+        }
+
+        public static IHtmlString Control(this HtmlHelper htmlHelper, string controlSrc, ModuleInfo module)
+        {
+            try
+            {
+                return htmlHelper.Action(
+                    "Invoke",
+                    MvcUtils.GetControlControllerName(controlSrc),
+                    new ControlViewModel()
+                    {
+                        ModuleId = module.ModuleID,
+                        TabId = module.TabID,
+                        ModuleControlId = module.ModuleControlId,
+                        PanaName = module.PaneName,
+                        ContainerSrc = module.ContainerSrc,
+                        ContainerPath = module.ContainerPath,
+                        IconFile = module.IconFile,
+                    });
             }
             catch (Exception ex)
             {
@@ -43,7 +73,19 @@ namespace DotNetNuke.Web.MvcPipeline
         {
             try
             {
-                return htmlHelper.Action("Invoke", MvcUtils.GetControlControllerName(module.ModuleControl.ControlSrc), module);
+                return htmlHelper.Action(
+                    "Invoke",
+                    MvcUtils.GetControlControllerName(module.ModuleControl.ControlSrc),
+                    new ControlViewModel()
+                    {
+                        ModuleId = module.ModuleID,
+                        TabId = module.TabID,
+                        ModuleControlId = module.ModuleControlId,
+                        PanaName = module.PaneName,
+                        ContainerSrc = module.ContainerSrc,
+                        ContainerPath = module.ContainerPath,
+                        IconFile = module.IconFile,
+                    });
             }
             catch (Exception ex)
             {
@@ -54,6 +96,28 @@ namespace DotNetNuke.Web.MvcPipeline
         public static IHtmlString CspNonce(this HtmlHelper htmlHelper)
         {
             return new MvcHtmlString(htmlHelper.ViewContext.HttpContext.Items["CSP-NONCE"].ToString());
+        }
+
+        public static IHtmlString RegisterAjaxScriptIfRequired(this HtmlHelper htmlHelper)
+        {
+            if (ServicesFrameworkInternal.Instance.IsAjaxScriptSupportRequired)
+            {
+                ServicesFrameworkInternal.Instance.RegisterAjaxScript(htmlHelper.ViewContext.Controller.ControllerContext);
+            }
+
+            return new MvcHtmlString(string.Empty);
+        }
+
+        public static IHtmlString AntiForgeryIfRequired(this HtmlHelper htmlHelper)
+        {
+            // ServicesFramework.Instance.RequestAjaxAntiForgerySupport(); // add also jquery
+            if (ServicesFrameworkInternal.Instance.IsAjaxAntiForgerySupportRequired)
+            {
+                // var antiForgery = AntiForgery.GetHtml().ToHtmlString();
+                return AntiForgery.GetHtml();
+            }
+
+            return new MvcHtmlString(string.Empty);
         }
     }
 }

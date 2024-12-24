@@ -96,6 +96,7 @@
     <Compile Include="Controllers\CSPReportDetail.cs" />
     <Compile Include="Controllers\DnnPageController.cs" />
     <Compile Include="Controllers\IMvcController.cs" />
+    <Compile Include="Controllers\ModuleViewControllerBase.cs" />
     <Compile Include="Controllers\ModuleControllerBase.cs" />
     <Compile Include="Controllers\ModuleSettingsController.cs" />
     <Compile Include="Controllers\ModuleSettingsViewController.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Exceptions\NotFoundException.cs" />
     <Compile Include="Models\ModuleHostModel.cs" />
     <Compile Include="Models\ModuleMessageModel.cs" />
+    <Compile Include="Models\ControlViewModel.cs" />
     <Compile Include="Models\ModuleModelBase.cs" />
     <Compile Include="Models\ModuleSettingsModel.cs" />
     <Compile Include="Models\ModuleSettingsMvcViewModel.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="Models\PaneModel.cs" />
     <Compile Include="Models\SkinModel.cs" />
     <Compile Include="Models\TabModel.cs" />
+    <Compile Include="ModuleControl\ModuleControlBase.cs" />
     <Compile Include="Modules\ModuleHelpers.cs" />
     <Compile Include="Modules\ModuleHelpers.DnnLabel.cs" />
     <Compile Include="Modules\ModuleHelpers.TextEditor.cs" />

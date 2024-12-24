@@ -65,12 +65,21 @@ namespace DotNetNuke.Web.DDRMenu
 
         /// <summary>Instantiates the MenuBase.</summary>
         /// <param name="menuStyle">The menu style to use.</param>
+        /// <param name="dirName">The skinpath.</param>
         /// <returns>A new instance of <see cref="MenuBase"/> using the provided menu style.</returns>
-        public static MvcMenuBase Instantiate(string menuStyle)
+        public static MvcMenuBase Instantiate(string menuStyle, string dirName)
         {
             try
             {
-                var templateDef = TemplateDefinition.FromManifest("/Portals/_default/Skins/Xcillion/" + menuStyle + "/MainMenu-menudef.xml");
+                var mappedDir = HttpContext.Current.Server.MapPath(dirName + menuStyle);
+                var resolvedPath = dirName + menuStyle;
+                var matches = Directory.GetFileSystemEntries(mappedDir, "*menudef.xml");
+                if (matches.Length > 0)
+                {
+                    resolvedPath = (dirName + menuStyle + "/" + Path.GetFileName(matches[0])).Replace('\\', '/');
+                }
+
+                var templateDef = TemplateDefinition.FromManifest(resolvedPath);
                 return new MvcMenuBase { TemplateDef = templateDef };
             }
             catch (Exception exc)

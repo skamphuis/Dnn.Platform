@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information
 
-namespace DotNetNuke.Modules.Html.Mvc
+namespace DotNetNuke.Modules.Html.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -20,6 +20,7 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Framework.JavaScriptLibraries;
     using DotNetNuke.Modules.Html;
     using DotNetNuke.Modules.Html.Components;
+    using DotNetNuke.Modules.Html.Models;
     using DotNetNuke.Mvc;
     using DotNetNuke.Services.Exceptions;
     using DotNetNuke.Services.Localization;
@@ -29,7 +30,7 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Website.Controllers;
     using Microsoft.Extensions.DependencyInjection;
 
-    public class HTMLMyWorkViewController : ModuleControllerBase
+    public class HTMLMyWorkViewController : ModuleViewControllerBase
     {
         private readonly INavigationManager navigationManager;
 
@@ -38,14 +39,13 @@ namespace DotNetNuke.Modules.Html.Mvc
             this.navigationManager = Globals.DependencyProvider.GetRequiredService<INavigationManager>();
         }
 
-        [ChildActionOnly]
-        public ActionResult Invoke(ModuleInfo module)
+        protected override object ViewModel(ModuleInfo module)
         {
             var objHtmlTextUsers = new HtmlTextUserController();
             var lst = objHtmlTextUsers.GetHtmlTextUser(this.UserInfo.UserID).Cast<HtmlTextUserInfo>();
             MvcClientResourceManager.RegisterStyleSheet(this.ControllerContext, "~/DesktopModules/HTML/edit.css");
             MvcClientResourceManager.RegisterStyleSheet(this.ControllerContext, "~/Portals/_default/Skins/_default/WebControlSkin/Default/GridView.default.css");
-            return this.View(module, new MyWorkModel()
+            return new MyWorkModel()
             {
                 LocalResourceFile = Path.Combine(Path.GetDirectoryName(module.ModuleControl.ControlSrc), Localization.LocalResourceDirectory + "/" + Path.GetFileNameWithoutExtension(module.ModuleControl.ControlSrc)),
                 ModuleId = module.ModuleID,
@@ -58,7 +58,7 @@ namespace DotNetNuke.Modules.Html.Mvc
                     ModuleTitle = u.ModuleTitle,
                     StateName = u.StateName,
                 }).ToList(),
-            });
+            };
         }
     }
 }

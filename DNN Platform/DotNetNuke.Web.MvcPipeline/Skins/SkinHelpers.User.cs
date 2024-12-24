@@ -52,14 +52,13 @@ namespace DotNetNuke.Web.MvcPipeline.Skins
             if (legacyMode)
             {
                 if (portalSettings.UserRegistration == (int)Globals.PortalRegistrationType.NoRegistration ||
-                    (portalSettings.Users > portalSettings.UserQuota || portalSettings.UserQuota == 0))
+                    (portalSettings.Users > portalSettings.UserQuota && portalSettings.UserQuota != 0))
                 {
                     return MvcHtmlString.Empty;
                 }
 
                 var registerLink = new TagBuilder("a");
                 registerLink.AddCssClass("dnnRegisterLink");
-                registerLink.AddCssClass("SkinObject");
                 if (!string.IsNullOrEmpty(cssClass))
                 {
                     registerLink.AddCssClass(cssClass);
@@ -286,17 +285,17 @@ namespace DotNetNuke.Web.MvcPipeline.Skins
                 var script = string.Format(
                     @"
                     <script nonce=""{0}"">
-                    $(function() {{
-                        var $loginLink = $('.dnnRegisterLink');
-                        if ($loginLink.length > 0) {{
-                            $loginLink.on('click', function(e) {{
-                                e.preventDefault();
-                                var $this = $(this);
-                                var url = $this.attr('href');
-                                
-                                if (!navigator.userAgent.match(/MSIE 8.0/)) {{
-                                    $this.prop('disabled', true);
-                                }}
+                    (function() {{
+                        var registerLinks = document.querySelectorAll('.dnnRegisterLink');
+                        if (registerLinks.length > 0) {{
+                            registerLinks.forEach(function(link) {{
+                                link.addEventListener('click', function(e) {{
+                                    e.preventDefault();
+                                    var url = this.getAttribute('href');
+                                    
+                                    if (!navigator.userAgent.match(/MSIE 8.0/)) {{
+                                        this.disabled = true;
+                                    }}
                                 ",
                     nonce);
 

@@ -130,17 +130,17 @@ namespace DotNetNuke.Web.MvcPipeline.Skins
                 var script = string.Format(
                     @"
                     <script nonce=""{0}"">
-                    $(function() {{
-                        var $loginLink = $('.dnnLoginLink');
-                        if ($loginLink.length > 0) {{
-                            $loginLink.on('click', function(e) {{
-                                e.preventDefault();
-                                var $this = $(this);
-                                var url = $this.attr('href');
-                                
-                                if (!navigator.userAgent.match(/MSIE 8.0/)) {{
-                                    $this.prop('disabled', true);
-                                }}
+                    (function() {{
+                        var loginLinks = document.querySelectorAll('.dnnLoginLink');
+                        if (loginLinks.length > 0) {{
+                            loginLinks.forEach(function(link) {{
+                                link.addEventListener('click', function(e) {{
+                                    e.preventDefault();
+                                    var url = this.getAttribute('href');
+                                    
+                                    if (!navigator.userAgent.match(/MSIE 8.0/)) {{
+                                        this.disabled = true;
+                                    }}
                                 ",
                     nonce);
 
@@ -156,7 +156,8 @@ namespace DotNetNuke.Web.MvcPipeline.Skins
                 }
 
                 script += @"
-                            return false;
+                                return false;
+                                });
                             });
                         }
                     });

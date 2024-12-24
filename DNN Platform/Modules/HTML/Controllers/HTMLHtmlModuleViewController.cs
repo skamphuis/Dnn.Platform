@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information
 
-namespace DotNetNuke.Modules.Html.Mvc
+namespace DotNetNuke.Modules.Html.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -21,6 +21,7 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Framework.JavaScriptLibraries;
     using DotNetNuke.Modules.Html;
     using DotNetNuke.Modules.Html.Components;
+    using DotNetNuke.Modules.Html.Models;
     using DotNetNuke.Mvc;
     using DotNetNuke.Services.Exceptions;
     using DotNetNuke.Services.Localization;
@@ -32,7 +33,7 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Website.Controllers;
     using Microsoft.Extensions.DependencyInjection;
 
-    public class HTMLHtmlModuleViewController : ModuleControllerBase
+    public class HTMLHtmlModuleViewController : ModuleViewControllerBase
     {
         private readonly INavigationManager navigationManager;
         private readonly HtmlTextController htmlTextController;
@@ -43,10 +44,8 @@ namespace DotNetNuke.Modules.Html.Mvc
             this.htmlTextController = new HtmlTextController(this.navigationManager);
         }
 
-        [ChildActionOnly]
-        public ActionResult Invoke(ModuleInfo module)
+        protected override object ViewModel(ModuleInfo module)
         {
-            // ModuleInfo module = ModuleController.Instance.GetModule(moduleId, Null.NullInteger, true);
             int workflowID = this.htmlTextController.GetWorkflow(module.ModuleID, module.TabID, module.PortalID).Value;
             this.ModuleActionPublish(module, workflowID);
             HtmlTextInfo content = this.htmlTextController.GetTopHtmlText(module.ModuleID, true, workflowID);
@@ -57,10 +56,10 @@ namespace DotNetNuke.Modules.Html.Mvc
                 html = System.Web.HttpUtility.HtmlDecode(content.Content);
             }
 
-            return this.View(module, new HtmlModuleModel()
+            return new HtmlModuleModel()
             {
                 Html = html,
-            });
+            };
         }
 
         private void ModuleActionPublish(ModuleInfo module, int workflowID)

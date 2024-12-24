@@ -12,7 +12,8 @@ namespace DotNetNuke.Web.MvcPipeline.Skins
 
     using ClientDependency.Core;
     using ClientDependency.Core.Mvc;
-
+    using DotNetNuke.Web.Client;
+    using DotNetNuke.Web.Client.ClientResourceManagement;
     using DotNetNuke.Web.MvcPipeline.Models;
 
     public static partial class SkinHelpers
@@ -38,6 +39,19 @@ namespace DotNetNuke.Web.MvcPipeline.Skins
             if (addTag || helper.ViewContext.HttpContext.IsDebuggingEnabled)
             {
                 return new MvcHtmlString(string.Format("<!--CDF({0}|{1}|{2}|{3})-->", ClientDependencyType.Css, string.Join(",", filePaths), forceProvider, priority));
+            }
+
+            return new MvcHtmlString(string.Empty);
+        }
+
+        public static IHtmlString DnnCssIncludeDefaultStylesheet(this HtmlHelper<PageModel> helper, string pathNameAlias = "", int priority = 100, bool addTag = false, string name = "", string version = "", bool forceVersion = false, string forceProvider = "", bool forceBundle = false, string cssMedia = "")
+        {
+            var filePath = string.Concat(Common.Globals.ApplicationPath, "/Resources/Shared/stylesheets/dnndefault/7.0.0/default.css");
+            MvcClientResourceManager.RegisterDefaultStylesheet(helper.ViewContext, filePath);
+
+            if (addTag || helper.ViewContext.HttpContext.IsDebuggingEnabled)
+            {
+                return new MvcHtmlString(string.Format("<!--CDF({0}|{1}|{2}|{3})-->", ClientDependencyType.Css, filePath, forceProvider, priority));
             }
 
             return new MvcHtmlString(string.Empty);

@@ -3,7 +3,7 @@
 @using DotNetNuke.Web.DDRMenu
 @model PageModel
 
-@section metas {
+@section head {
     @Html.Meta(name: "viewport", content: "width=device-width,initial-scale=1")
 }
 
@@ -75,31 +75,31 @@
     <div class="container">
         <main role="main">
             <div class="row dnnpane">
-                <div id="HeaderPane" class="col-md-12 headerPane">@Html.Pane("headerpane")</div>
+                @Html.Pane(id: "headerpane", cssClass: "col-md-12 headerPane")
             </div>
             <div id="mainContent-inner">
                 <div class="row dnnpane">
-                    <div id="ContentPane" class="col-md-12 contentPane">@Html.Pane("contentpane")</div>
+                    @Html.Pane(id: "contentpane", cssClass: "col-md-12 contentPane")
                 </div>
 
                 <div class="row dnnpane">
-                    <div id="P1_75_1" class="col-md-8 spacingTop">@Html.Pane("p1_75_1")</div>
-                    <div id="P1_25_2" class="col-md-4 spacingTop">@Html.Pane("p1_25_2")</div>
+                    @Html.Pane(id: "p1_75_1", cssClass: "col-md-8 spacingTop")
+                    @Html.Pane(id: "p1_25_2", cssClass: "col-md-4 spacingTop")
                 </div>
 
                 <div class="row dnnpane">
-                    <div id="P2_25_1" class="col-md-4 spacingTop">@Html.Pane("p2_25_1")</div>
-                    <div id="P2_75_2" class="col-md-8 spacingTop">@Html.Pane("p2_75_2")</div>
+                    @Html.Pane(id: "p2_25_1", cssClass: "col-md-4 spacingTop")
+                    @Html.Pane(id: "p2_75_2", cssClass: "col-md-8 spacingTop")
                 </div>
 
                 <div class="row dnnpane">
-                    <div id="P3_33_1" class="col-md-4 spacingTop">@Html.Pane("p3_33_1")</div>
-                    <div id="P3_33_2" class="col-md-4 spacingTop">@Html.Pane("p3_33_2")</div>
-                    <div id="P3_33_3" class="col-md-4 spacingTop">@Html.Pane("p3_33_3")</div>
+                    @Html.Pane(id: "p3_33_1", cssClass: "col-md-4 spacingTop")
+                    @Html.Pane(id: "p3_33_2", cssClass: "col-md-4 spacingTop")
+                    @Html.Pane(id: "p3_33_3", cssClass: "col-md-4 spacingTop")
                 </div>
 
                 <div class="row dnnpane">
-                    <div id="ContentPaneLower" class="col-md-12 contentPane spacingTop">@Html.Pane("contentpanelower")</div>
+                    @Html.Pane(id: "contentpanelower", cssClass: "col-md-12 contentPane spacingTop")
                 </div>
             </div><!-- /.mainContent-inner -->
         </main>
@@ -111,11 +111,11 @@
         <div class="footer-above">
             <div class="container">
                 <div class="row dnnpane">
-                    <div id="footer_25_1" class="footer-col col-md-3 col-sm-6">@Html.Pane("footer_25_1")</div>
-                    <div id="footer_25_2" class="footer-col col-md-3 col-sm-6">@Html.Pane("footer_25_2")</div>
+                    @Html.Pane(id: "footer_25_1", cssClass: "footer-col col-md-3 col-sm-6")
+                    @Html.Pane(id: "footer_25_2", cssClass: "footer-col col-md-3 col-sm-6")
                     <div class="clearfix visible-sm"></div>
-                    <div id="footer_25_3" class="footer-col col-md-3 col-sm-6">@Html.Pane("footer_25_3")</div>
-                    <div id="footer_25_4" class="footer-col col-md-3 col-sm-6">@Html.Pane("footer_25_4")</div>
+                    @Html.Pane(id: "footer_25_3", cssClass: "footer-col col-md-3 col-sm-6")
+                    @Html.Pane(id: "footer_25_4", cssClass: "footer-col col-md-3 col-sm-6")
                 </div>
             </div>
         </div>

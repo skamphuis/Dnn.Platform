@@ -32,6 +32,7 @@ namespace DotNetNuke.Website.Controllers
     using DotNetNuke.UI.Modules;
     using DotNetNuke.Web.Client;
     using DotNetNuke.Web.Client.ClientResourceManagement;
+    using DotNetNuke.Web.MvcPipeline.Models;
     using DotNetNuke.Website.Models;
     using Newtonsoft.Json;
 
@@ -113,8 +114,19 @@ namespace DotNetNuke.Website.Controllers
         }
 
         [ChildActionOnly]
-        public ActionResult Invoke(ModuleInfo moduleInfo)
+        public ActionResult Invoke(ControlViewModel input)
         {
+            var moduleInfo = ModuleController.Instance.GetModule(input.ModuleId, input.TabId, false);
+            if (moduleInfo.ModuleControlId != input.ModuleControlId)
+            {
+                moduleInfo = moduleInfo.Clone();
+                moduleInfo.ContainerPath = input.ContainerPath;
+                moduleInfo.ContainerSrc = input.ContainerSrc;
+                moduleInfo.ModuleControlId = input.ModuleControlId;
+                moduleInfo.PaneName = input.PanaName;
+                moduleInfo.IconFile = input.IconFile;
+            }
+
             this.ModuleContext = new ModuleInstanceContext(/*new FakeModuleControl()*/) { Configuration = moduleInfo };
             this.OnInit();
             this.OnLoad(moduleInfo);

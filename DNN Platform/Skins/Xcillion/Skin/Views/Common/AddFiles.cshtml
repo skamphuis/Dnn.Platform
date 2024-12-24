@@ -3,6 +3,8 @@
 
 @model PageModel
 
+@Html.DnnCssIncludeDefaultStylesheet();
+
 @Html.DnnCssInclude(filePath: "bootstrap/css/bootstrap.min.css", pathNameAlias: "SkinPath", priority: 12)
 @Html.DnnCssInclude("css/jquery.smartmenus.bootstrap.css", pathNameAlias: "SkinPath", priority: 13)
 @Html.DnnCssInclude("Menus/MainMenu/MainMenu.css", pathNameAlias: "SkinPath", priority: 14)

@@ -14,6 +14,7 @@ namespace DotNetNuke.Modules.Html
     using DotNetNuke.Security;
     using DotNetNuke.Security.Permissions;
     using DotNetNuke.Services.Localization;
+    using DotNetNuke.Web.MvcPipeline.ModuleControl;
     using Microsoft.Extensions.DependencyInjection;
 
     public class HtmlModuleControl : ModuleControlBase, IActionable

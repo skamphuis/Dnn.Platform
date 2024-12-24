@@ -1,9 +1,13 @@
 @using ClientDependency.Core
 @using ClientDependency.Core.Mvc
+@using DotNetNuke.Web.MvcPipeline
 @model DotNetNuke.Web.MvcPipeline.Models.PageModel
 @{
     var SkinPath = Path.GetDirectoryName(Model.Skin.SkinSrc).Replace("\\","/");
     DotNetNuke.Framework.JavaScriptLibraries.MvcJavaScript.Register(this.ViewContext);
+
+   
+    //DotNetNuke.Framework.Controllers.DefaultController.RegisterAjaxScript(this.ViewContext.Controller.ControllerContext);
 }
 <!DOCTYPE html>
 <html lang="@Model.Language">
@@ -42,8 +46,9 @@
     {
         @Html.Raw(Model.FavIconLink)
     }
-    @RenderSection("metas", required: false)
     <title>[MVC] @Model.Title</title>
+    @Html.RegisterAjaxScriptIfRequired()
+    @RenderSection("head", required: false)
     @Html.RenderCssHere(new BasicPath("SkinPath", SkinPath), new BasicPath("SharedScripts", "~/Resources/Shared/Scripts/"))
     @RenderSection("stylesheets", required: false)
     @Html.RenderJsHere(new BasicPath("SkinPath", SkinPath), new BasicPath("SharedScripts", "~/Resources/Shared/Scripts/"))
@@ -54,7 +59,8 @@
         <div class="aspNetHidden">
             <input name="ScrollTop" type="hidden" id="ScrollTop" />
             <input name="__dnnVariable" type="hidden" id="__dnnVariable" autocomplete="off" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model.ClientVariables)">
-            @Html.Raw(Model.AntiForgery)
+            @*@Html.Raw(Model.AntiForgery)*@
+            @Html.AntiForgeryIfRequired()
         </div>
     </form>
     @if (!string.IsNullOrEmpty(Model.Skin.ControlPanelRazor))

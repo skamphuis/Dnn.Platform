@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information
 
-namespace DotNetNuke.Modules.Html.Mvc
+namespace DotNetNuke.Modules.Html.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -21,6 +21,7 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Framework.JavaScriptLibraries;
     using DotNetNuke.Modules.Html;
     using DotNetNuke.Modules.Html.Components;
+    using DotNetNuke.Modules.Html.Models;
     using DotNetNuke.Mvc;
     using DotNetNuke.Services.Exceptions;
     using DotNetNuke.Services.Localization;

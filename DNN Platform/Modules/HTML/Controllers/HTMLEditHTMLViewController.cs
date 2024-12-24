@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information
 
-namespace DotNetNuke.Modules.Html.Mvc
+namespace DotNetNuke.Modules.Html.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -21,6 +21,7 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Framework.JavaScriptLibraries;
     using DotNetNuke.Modules.Html;
     using DotNetNuke.Modules.Html.Components;
+    using DotNetNuke.Modules.Html.Models;
     using DotNetNuke.Mvc;
     using DotNetNuke.Services.Exceptions;
     using DotNetNuke.Services.Localization;
@@ -32,9 +33,9 @@ namespace DotNetNuke.Modules.Html.Mvc
     using DotNetNuke.Website.Controllers;
     using Microsoft.Extensions.DependencyInjection;
 
-    using static DotNetNuke.Modules.Html.Mvc.DNN_HTMLController;
+    using static DotNetNuke.Modules.Html.Controllers.DNN_HTMLController;
 
-    public class HTMLEditHTMLViewController : ModuleControllerBase
+    public class HTMLEditHTMLViewController : ModuleViewControllerBase
     {
         private readonly INavigationManager navigationManager;
         private readonly HtmlTextController htmlTextController;
@@ -50,9 +51,7 @@ namespace DotNetNuke.Modules.Html.Mvc
             this.contentSecurityPolicy = csp;
         }
 
-        [HttpGet]
-        [ChildActionOnly]
-        public ActionResult Invoke(ModuleInfo module)
+        protected override object ViewModel(ModuleInfo module)
         {
             var model = new EditHtmlViewModel();
 
@@ -115,7 +114,7 @@ namespace DotNetNuke.Modules.Html.Mvc
             this.contentSecurityPolicy.StyleSource.AddInline();
             this.contentSecurityPolicy.ScriptSource.AddSelf().AddInline();
             this.contentSecurityPolicy.ImgSource.AddScheme("data:");
-            return this.View(module, model);
+            return model;
         }
 
         private void PopulateModelWithContent(EditHtmlViewModel model, HtmlTextInfo htmlContent)
