@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.WebFormsMvp" type="Library" version="1.4.5">
+    <package name="DotNetNuke.WebFormsMvp" type="Library" version="09.11.00">
       <friendlyName>WebFormsMvp</friendlyName>
       <description>Library for module development using MVP pattern.</description>
       <dependencies/>
